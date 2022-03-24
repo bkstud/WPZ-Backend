@@ -2,7 +2,7 @@
     "id":0,
     "text":"Co to jeste HTML?",
     "type":0,    
-    "answears:":[
+    "options:":[
         {
             "id":0,
             "text":"język programowania"
@@ -22,7 +22,7 @@
     "id":1,
     "text":"Kim jest Władmir Putin?",
     "type":1,
-    "answears:":[
+    "options:":[
         {
             "id":3,
             "text":"zbrodniarzem wojennym"
