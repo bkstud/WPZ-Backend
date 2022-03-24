@@ -17,6 +17,8 @@
   },
   "homepage": "https://github.com/bkstud/WPZ#readme",
   "dependencies": {
-    "express": "^4.17.3"
+    "express": "^4.17.3",
+    "sequelize": "^6.17.0",
+    "sqlite3": "^5.0.2"
   }
 }
