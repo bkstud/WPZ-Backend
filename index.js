@@ -1,13 +1,14 @@
 const express = require('express');
+const db = require('./config/database')
+
 const app = express();
 
-app.get('/', function (req, res) {
-    res.send('Hello World!2');
-});
+db.authenticate()
+  .then(() => console.log('Database connected'))
+  .catch(() => console.log("Error: " + err))
 
-app.get('/test', function (req, res) {
-    res.send('Hello World! TEST');
-});
-app.listen(3000, function () {
+app.use('/users', require('./controllers/usersController'));
+
+app.listen(3000, () => {
     console.log('Example app listening on port 3000!');
 });
