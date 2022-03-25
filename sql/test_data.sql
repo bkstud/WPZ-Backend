@@ -35,6 +35,6 @@ VALUES (2, 'szefem Micro$oftu xD', FALSE);
 
 /* Przykładowe odpowiedzi użytkownika */
 
-INSERT INTO answear(user_id, question_id, option_id) VALUES (1, 1, 2);
-INSERT INTO answear(user_id, question_id, option_id) VALUES (1, 2, 4);
-INSERT INTO answear(user_id, question_id, option_id) VALUES (1, 2, 5);
+INSERT INTO answer(user_id, question_id, option_id) VALUES (1, 1, 2);
+INSERT INTO answer(user_id, question_id, option_id) VALUES (1, 2, 4);
+INSERT INTO answer(user_id, question_id, option_id) VALUES (1, 2, 5);

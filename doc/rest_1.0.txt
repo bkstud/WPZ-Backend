@@ -41,11 +41,11 @@ type 1 -> wielokrotnego wyboru
 Dostęp tylko po wykonaniu  POST /api/start 
 i przed wykonaniem         POST /api/end
 
-POST /api/answear
+POST /api/answer
 
 W request body JSON jak odpowiednio:
-"asnwear.json"  - dla pytania jednokrotnego wyboru,
-"answear2.json  - dla pytania wielokrotnego wyboru"
+"asnwer.json"  - dla pytania jednokrotnego wyboru,
+"answer2.json  - dla pytania wielokrotnego wyboru"
 
 
 ###################################################

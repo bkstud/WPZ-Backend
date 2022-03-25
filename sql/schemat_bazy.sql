@@ -32,7 +32,7 @@ create table question_option(
         ON DELETE CASCADE
 );
 
-create table answear(
+create table answer(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL, /* id użytkownika */
     question_id INTEGER NOT NULL, /* id pytania */
