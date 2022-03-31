@@ -1,0 +1,135 @@
+Dokumentacja REST API, wersja dla wielu egzaminów.
+
+ID użytkownika bierzemy z danych logowania.
+
+
+Czas w formacie UNIX timestamp.
+Jakby ktoś się zastanawiał na front-endzie,jak wyświetlić to jako normalną datę/godzinę, to:
+https://stackoverflow.com/questions/847185/convert-a-unix-timestamp-to-time-in-javascript
+
+
+
+GET /api/exam
+Zwraca listę wszystkich egzaminów.
+Przykład: exams.json
+
+-> max_approaches - maksymalna dozwolona liczba podejść
+-> start_time - timestamp rozpoczęcia egzaminu
+-> end_time - timestamp zakończenia egzaminu
+
+
+GET /api/exam/14
+Zwraca egzamin o id 14.
+
+GET /api/exam/14/approach
+Zwraca listę podejść do danego egzaminu
+Przykład: approach.json
+
+! Tylko podejścia użytkownika wykonującego zapytnie
+! Nie zwracać podejść innych użytkowników.
+
+
+
+
+POST /api/exam/14/start
+Rozpoczyna egzamin, tworzy nowe podejście dla danego egzaminu, zwraca id podejścia
+(approach_id)
+
+{
+ "detail":"Started the exam, new approach created."
+ "approach_id: 146
+}
+
+
+POST /api/approach/146/end
+Kończy podejście o id 146, nie zwraca nic konkretnego, typu:
+{
+ "detail":"Your approach to the exam is over."
+}
+
+
+W przypadku, gdy użytkownik wyczerpał liczbę podejść dla danego egzaminu,
+a próbuje stworzyć nowe podejście, zwracamy status code 409 (conflict).
+Z odpowiednim komunikatem, typu:
+
+{
+ "detail":"You have exhausted the number of approach to this exam."
+}
+
+W przypadku, gdy użytkownik próbuje rozpocząć podejście przed czasem rozpoczęcia egzaminu,
+zwracamy status code 425 (too early) z odpowiednim komunikatem:
+
+{
+ "detail":"Too early, you cannot start this exam yet."
+}
+
+W przypadku, gdy użytkownik próbuje rozpocząć podejście po czasie zakończenia,
+zwracamy statuc code 410 (gone) z odpowiednim komunikatem:
+
+{
+ "detail":"Too late, the time to start this exam is over."
+}
+
+##################################################
+Dostęp tylko podczas, gdy użytkownik ma otwarte podejście.
+
+GET /api/exam/14/question (Wszystkie pytania)  (przykład "questions.json")
+GET /api/exam/14/question/123 (Tylko pytanie z id 123)
+
+
+Typ pytania
+type 0 -> jednokrotnego wyboru
+type 1 -> wielokrotnego wyboru
+
+
+POST /api/answer
+
+W request body JSON jak odpowiednio:
+"asnwer.json"  - dla pytania jednokrotnego wyboru,
+"answer2.json  - dla pytania wielokrotnego wyboru"
+
+Udzielenie odpowiedzi
+ ! UWAGA, trzeba sprawdzać na back-endzie podane przez użytkownika approach_id
+
+ ! Użytkownik może próbować udzielać odpowiedzi na nieswoje lub nieistniejące podejście
+ ! Zwracamy wtedy statuc code 403 z odpowiednim komunikatem
+
+{
+    "detail":"Cannot post the answer with this approach_id."
+}
+
+ ! Użytkownik może próbować udzielić odpowiedzi na wygasłe podejście
+ ! Zwracamy wtedy status code 409 z odpowiednim komunikatem
+{
+    "detail":"This approach has expired."
+}
+
+###################################################
+
+Dostęp po wykonaniu POST /api/end:
+Dostęp po zakończeniu podejścia:
+
+
+GET /api/approach/146/score
+ ! UWAGA, trzeba sprawdzać na back-endzie czy użytkownik podaje swoje podejście,
+ ! jak przy udzielaniu odpowiedzi, w przeciwnym razie status code 403.
+
+
+Zwraca punktowe wyniki egzaminu.
+Przykład dla egzaminu składającego się z 3 pytań,
+na 2 z nich użytkownik odpowiedział dobrze, na jedno błędnie:
+
+{
+    "max_points":3,
+    "score":2
+}
+
+GET /api/approach/146/detailed_score
+Wynik ze szczegółami dla danego podejścia
+
+Przykład: "score.json"
+
+###################################################
+W przypadku braku autentyfikacji zwracamy status code 401,
+w przypadku błędnego loginu, hasła lub braku uprawnień 403.
+Z odpowiednim komunikatem w polu "detail"
