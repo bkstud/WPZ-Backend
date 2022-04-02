@@ -9,23 +9,25 @@ User.init({
         autoIncrement: true,
         primaryKey: true
     },
-    first_name: {
+    username: {
         type: DataTypes.STRING
     },
-    last_name: {
+    password: {
         type: DataTypes.STRING
     },
-    age: {
-        type: DataTypes.INTEGER
+    name: {
+        type: DataTypes.STRING
+    },
+    surname: {
+        type: DataTypes.STRING
     },
     email: {
         type: DataTypes.STRING
-    },
-    sex: {
-        type: DataTypes.CHAR
     }
 }, {
     sequelize: db
 })
+
+User.sync()
 
 module.exports = User

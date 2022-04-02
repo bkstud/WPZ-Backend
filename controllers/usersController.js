@@ -1,33 +1,53 @@
 const express = require('express')
 const router = express.Router()
-const UserDao = require('../dao/UserDao')
-
-userDao = new UserDao()
+const userDao = require('../dao/userDao')
+const jwtService = require('../services/jwtService')
 
 router.use(express.json())
 
-router.get('/', (req, res) => {
+router.get('/', jwtService.verifyToken, (req, res) => {
     userDao.getAllUsers()
         .then(users => res.json(users))
-        .catch(err => console.log(err))
+        .catch(err => {
+            console.log(err)
+            res.sendStatus(500)
+        })
 })
 
-router.post('/', (req, res) => {
+router.get('/:id', jwtService.verifyToken, (req, res) => {
+    userDao.getUserById(req.params.id)
+        .then(user => res.json(user))
+        .catch(err => {
+            console.log(err)
+            res.sendStatus(500)
+        })
+})
+
+router.post('/', jwtService.verifyToken, (req, res) => {
     userDao.createUser(req.body)
-        .then(res.redirect('/users'))
-        .catch(err => console.log(err))
+        .then(res.redirect('/api/users'))
+        .catch(err => {
+            console.log(err)
+            res.sendStatus(500)
+        })
 })
 
-router.delete('/', (req, res) => {
-    userDao.deleteUserById(req.body.id)
-        .then(res.redirect('/users'))
-        .catch(err => console.log(err))
+router.delete('/:id', jwtService.verifyToken, (req, res) => {
+    userDao.deleteUserById(req.params.id)
+        .then(res.redirect('/api/users'))
+        .catch(err => {
+            console.log(err)
+            res.sendStatus(500)
+        })
 })
 
-router.put('/', (req,res) => {
+router.put('/', jwtService.verifyToken, (req,res) => {
     userDao.updateUser(req.body)
-        .then(res.redirect('/users'))
-        .catch(err => console.log(err))
+        .then(res.redirect('/api/users'))
+        .catch(err => {
+            console.log(err)
+            res.sendStatus(500)
+        })
 })
 
 module.exports = router

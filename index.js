@@ -5,10 +5,11 @@ const app = express();
 
 db.authenticate()
   .then(() => console.log('Database connected'))
-  .catch(() => console.log("Error: " + err))
+  .catch(() => console.log("Error: ", err))
 
-app.use('/users', require('./controllers/usersController'));
+app.use('/api/users', require('./controllers/usersController'));
+app.use('/api/auth', require('./controllers/loginRegisterController'))
 
-app.listen(3000, () => {
+app.listen(3002, () => {
     console.log('Example app listening on port 3000!');
 });
