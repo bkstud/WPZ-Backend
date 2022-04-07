@@ -10,7 +10,14 @@ User.init({
         primaryKey: true
     },
     username: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true
+    },
+    admin: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false        
     },
     password: {
         type: DataTypes.STRING
