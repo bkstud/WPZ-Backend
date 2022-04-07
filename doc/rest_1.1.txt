@@ -16,25 +16,17 @@ Przykład: exams.json
 -> max_approaches - maksymalna dozwolona liczba podejść
 -> start_time - timestamp rozpoczęcia egzaminu
 -> end_time - timestamp zakończenia egzaminu
+Pytanie numerujemy od 1.
 
 
 GET /api/exam/14
 Zwraca egzamin o id 14.
-
-GET /api/exam/14/approach
-Zwraca listę podejść do danego egzaminu
-Przykład: approach.json
-
-! Tylko podejścia użytkownika wykonującego zapytnie
-! Nie zwracać podejść innych użytkowników.
-
-
+Zwraca jeden element z exams.json a nie liste.
 
 
 POST /api/exam/14/start
 Rozpoczyna egzamin, tworzy nowe podejście dla danego egzaminu, zwraca id podejścia
 (approach_id)
-
 {
  "detail":"Started the exam, new approach created."
  "approach_id: 146
@@ -71,7 +63,7 @@ zwracamy statuc code 410 (gone) z odpowiednim komunikatem:
 }
 
 ##################################################
-Dostęp tylko podczas, gdy użytkownik ma otwarte podejście.
+Dostęp tylko podczas, raczej tylko dla admina.
 
 GET /api/exam/14/question (Wszystkie pytania)  (przykład "questions.json")
 GET /api/exam/14/question/123 (Tylko pytanie z id 123)
@@ -85,8 +77,7 @@ type 1 -> wielokrotnego wyboru
 POST /api/answer
 
 W request body JSON jak odpowiednio:
-"asnwer.json"  - dla pytania jednokrotnego wyboru,
-"answer2.json  - dla pytania wielokrotnego wyboru"
+"asnwer.json"  - dla pytania (Jak pytanie jest jednokrotnego wyboru to lista z jednym elementem.).
 
 Udzielenie odpowiedzi
  ! UWAGA, trzeba sprawdzać na back-endzie podane przez użytkownika approach_id
