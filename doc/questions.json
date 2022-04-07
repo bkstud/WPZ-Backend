@@ -1,0 +1,42 @@
+[{
+    "id":0,
+    "text":"Co to jeste HTML?",
+    "type":0,    
+    "options:":[
+        {
+            "id":0,
+            "text":"język programowania"
+        },
+        {
+            "id":1,
+            "text":"język znaczników"
+        },
+        {
+            "id":2,
+            "text":"baza danych"
+        }
+    ]
+},
+
+{
+    "id":1,
+    "text":"Kim jest Władmir Putin?",
+    "type":1,
+    "options:":[
+        {
+            "id":3,
+            "text":"zbrodniarzem wojennym"
+        },
+
+        {
+            "id":4,
+            "text":"dyktatorem"
+        },
+        {
+            "id":5,
+            "text":"szefem Micro$oftu xD"
+        }
+
+    ]
+}]
+

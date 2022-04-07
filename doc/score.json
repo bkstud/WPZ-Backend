@@ -1,0 +1,18 @@
+{
+    "max_points":3,
+    "score":2,
+    "detailed_score":[
+        {
+            "question_id":0,
+            "correct":true
+        },
+        {
+            "question_id":1,
+            "correct":true
+        },
+        {
+            "question_id":2,
+            "correct":false
+        }
+    ]
+}
