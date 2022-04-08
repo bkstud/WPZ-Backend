@@ -1,6 +1,7 @@
 {
     "exam_data": "wszystko co exams.json",
-    "question": [
+    "approach_id": 146,
+    "questions": [
         {
             "id": 0,
             "text": "Co to jeste HTML?",

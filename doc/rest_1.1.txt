@@ -27,13 +27,11 @@ Zwraca jeden element z exams.json a nie liste.
 POST /api/exam/14/start
 Rozpoczyna egzamin, tworzy nowe podejście dla danego egzaminu, zwraca id podejścia
 (approach_id)
-{
- "detail":"Started the exam, new approach created."
- "approach_id: 146
-}
+
+# przykład -> exam_start.json
 
 
-POST /api/approach/146/end
+POST /api/exam/approach/146/end
 Kończy podejście o id 146, nie zwraca nic konkretnego, typu:
 {
  "detail":"Your approach to the exam is over."
@@ -62,12 +60,14 @@ zwracamy statuc code 410 (gone) z odpowiednim komunikatem:
  "detail":"Too late, the time to start this exam is over."
 }
 
-##################################################
-Dostęp tylko podczas, raczej tylko dla admina.
 
-GET /api/exam/14/question (Wszystkie pytania)  (przykład "questions.json")
-GET /api/exam/14/question/123 (Tylko pytanie z id 123)
+# Endpoint do "odzyskiwania" pytań z trwającego podejścia
+# Na przykład po niechcącemu zamknięciu przegląrki
+# Zwraca listę pytań dla trwającego podejścia 146
 
+GET /api/exam/approach/146/questions
+
+Przykład: questions.json
 
 Typ pytania
 type 0 -> jednokrotnego wyboru
@@ -77,23 +77,9 @@ type 1 -> wielokrotnego wyboru
 POST /api/answer
 
 W request body JSON jak odpowiednio:
-"asnwer.json"  - dla pytania (Jak pytanie jest jednokrotnego wyboru to lista z jednym elementem.).
+"answer.json"  - dla pytania (Jak pytanie jest jednokrotnego wyboru to lista z jednym elementem.).
 
-Udzielenie odpowiedzi
- ! UWAGA, trzeba sprawdzać na back-endzie podane przez użytkownika approach_id
 
- ! Użytkownik może próbować udzielać odpowiedzi na nieswoje lub nieistniejące podejście
- ! Zwracamy wtedy statuc code 403 z odpowiednim komunikatem
-
-{
-    "detail":"Cannot post the answer with this approach_id."
-}
-
- ! Użytkownik może próbować udzielić odpowiedzi na wygasłe podejście
- ! Zwracamy wtedy status code 409 z odpowiednim komunikatem
-{
-    "detail":"This approach has expired."
-}
 
 ###################################################
 
@@ -101,7 +87,7 @@ Dostęp po wykonaniu POST /api/end:
 Dostęp po zakończeniu podejścia:
 
 
-GET /api/approach/146/score
+GET /api/exam/approach/146/score
  ! UWAGA, trzeba sprawdzać na back-endzie czy użytkownik podaje swoje podejście,
  ! jak przy udzielaniu odpowiedzi, w przeciwnym razie status code 403.
 
@@ -111,11 +97,12 @@ Przykład dla egzaminu składającego się z 3 pytań,
 na 2 z nich użytkownik odpowiedział dobrze, na jedno błędnie:
 
 {
+    "exam_id":13,
     "max_points":3,
     "score":2
 }
 
-GET /api/approach/146/detailed_score
+GET /api/exam/approach/146/detailed_score
 Wynik ze szczegółami dla danego podejścia
 
 Przykład: "score.json"

@@ -8,6 +8,7 @@
         "approaches_remaining": 1,
         "can_start": true,
         "approaches_in_progress": [],
+        "finished_approaches": [124],
         "number_of_questions": 30
     },
     {
@@ -18,9 +19,8 @@
         "end_time": 1648718439,
         "approaches_remaining": 1,
         "can_start": true,
-        "approaches_in_progress": [
-            "12345-12345"
-        ],
+        "approaches_in_progress": [125],
+        "finished_approaches": [],
         "number_of_questions": 30
     }
 ]
