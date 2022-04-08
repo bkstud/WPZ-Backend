@@ -1,6 +1,6 @@
 'use strict';
 
-const approachDao = require("./approachDao");
+const examApproachDao = require("./examApproachDao");
 const questionDao = require("./questionDao");
 
 const Answer = require("../models/Answer");
@@ -49,7 +49,7 @@ async function postAnswer(user_id, answer_data){
     let approach_id = answer_data.approach_id;
     let question_id = answer_data.question_id;
 
-    let approach_r = await approachDao.getApproach(approach_id, user_id);
+    let approach_r = await examApproachDao.getApproach(approach_id, user_id);
     if(!approach_r.success){
         return approach_r;
     }

@@ -1,12 +1,15 @@
-const express = require('express')
-const router = express.Router()
-const userDao = require('../dao/userDao')
-const jwtService = require('../services/jwtService')
-const{onClientError, onServerError} = require("./errorHandler");
+'use strict';
 
+const express = require('express');
+const router = express.Router();
+const userDao = require('../../dao/userDao');
+const{onClientError, onServerError} = require("../errorHandler");
 
-router.use(express.json())
-router.use(jwtService.verifyTokenAdmin);
+router.use(express.json());
+
+// Nie trzeba, bo mamy zbiorczo w adminController
+
+//router.use(jwtService.verifyTokenAdmin);
 
 router.get('/', (req, res) => {
     userDao.getAllUsers()

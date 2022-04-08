@@ -1,13 +1,15 @@
 'use strict';
 const express = require('express');
 const router = express.Router();
-const questionDao = require("../dao/questionDao");
-const{onClientError, onServerError} = require("./errorHandler");
+const questionDao = require("../../dao/questionDao");
+const{onClientError, onServerError} = require("../errorHandler");
 
-const jwtService = require('../services/jwtService');
 
 router.use(express.json());
-router.use(jwtService.verifyTokenAdmin);
+
+// Nie trzeba, bo mamy zbiorczo w adminController
+
+//router.use(jwtService.verifyTokenAdmin);
 
 router.get("/", (req, res)=>{
     questionDao.getAllQuestions().then(

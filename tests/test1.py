@@ -53,21 +53,18 @@ def test_post(url, json_data):
     return (r.status_code, r_json)
 
 
-#     !!!! /api/exam będzie dla admina
-#     !!!! Dla normalnych użytkowników /api/approach/exam
-
 #Wszystkie egzaminy (do podejścia)
-test_get("/api/approach/exam")
+test_get("/api/exam")
 
 #Jak wyżej, tylko egzamin o id 1
-test_get("/api/approach/exam/1")
-test_get("/api/approach/exam/2")
+test_get("/api/exam/1")
+test_get("/api/exam/2")
 
 
 print()
 
 #Rozpoczynanie egzaminu o id 1
-status, r_json = test_empty_post("/api/approach/exam/1/start")
+status, r_json = test_empty_post("/api/exam/1/start")
 
 if status!=200:
     exit(0)
@@ -104,11 +101,11 @@ if status!=201:
 
 # Endpoint do "odzyskiwania" pytań z trwającego podejścia
 # Na przykład po niechcącemu zamknięciu przegląrki
-test_get("/api/approach/{}/questions".format(approach_id))
+test_get("/api/exam/approach/{}/questions".format(approach_id))
 
 
 #Kończymy podejście
-status, r_json = test_empty_post("/api/approach/{}/end".format(approach_id))
+status, r_json = test_empty_post("/api/exam/approach/{}/end".format(approach_id))
 
 if status!=200:
     exit(0)

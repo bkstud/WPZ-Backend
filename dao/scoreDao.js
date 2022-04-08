@@ -1,13 +1,13 @@
 'use strict';
 
-const approachDao = require("./approachDao");
+const examApproachDao = require("./examApproachDao");
 const examDao = require("./examDao");
 const questionDao = require("./questionDao");
 const answerDao = require("./answerDao");
 
 async function getScoreForApproach(approach_id, user_id, user_admin, detailed=true){
 
-    let approach_r = await approachDao.getApproach(approach_id, user_id, true, user_admin);
+    let approach_r = await examApproachDao.getApproach(approach_id, user_id, true, user_admin);
     if(!approach_r.success){
         return approach_r;
     }

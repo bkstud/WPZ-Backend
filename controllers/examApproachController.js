@@ -2,7 +2,7 @@
 
 const express = require('express');
 const router = express.Router();
-const approachDao = require("../dao/approachDao.js");
+const examApproachDao = require("../dao/examApproachDao");
 //const onError = require("./errorController");
 const{onClientError, onServerError} = require("./errorHandler");
 const jwtService = require('../services/jwtService');
@@ -10,18 +10,18 @@ const jwtService = require('../services/jwtService');
 //router.use(express.json());
 router.use(jwtService.verifyToken);
 
-router.get("/exam", (req, res)=>{
-    approachDao.getAllExamsWithApproachData(req.user_id).then(
+router.get("/", (req, res)=>{
+    examApproachDao.getAllExamsWithApproachData(req.user_id).then(
         exams => res.status(200).json(exams)
     ).catch(err => onServerError(res, err));
 
 });
 
 
-router.get("/exam/:exam_id(\\d+)", (req, res)=>{
+router.get("/:exam_id(\\d+)", (req, res)=>{
     let exam_id = req.params.exam_id;
 
-    approachDao.getExamWithApproachData(exam_id, req.user_id).then(
+    examApproachDao.getExamWithApproachData(exam_id, req.user_id).then(
         exam_r => {
             if(exam_r.success){
                 res.status(200).json(exam_r.exam)
@@ -33,9 +33,9 @@ router.get("/exam/:exam_id(\\d+)", (req, res)=>{
     ).catch(err => onServerError(res, err));
 });
 
-router.post("/exam/:exam_id(\\d+)/start", (req, res)=>{
+router.post("/:exam_id(\\d+)/start", (req, res)=>{
     let exam_id = req.params.exam_id;
-    approachDao.startExam(exam_id, req.user_id).then(function(approach_r){
+    examApproachDao.startExam(exam_id, req.user_id).then(function(approach_r){
         if(approach_r.success){
             res.status(200).json({
                 "detail":"Started the exam",
@@ -51,9 +51,9 @@ router.post("/exam/:exam_id(\\d+)/start", (req, res)=>{
     }).catch(err => onServerError(res, err));
 });
 
-router.post("/:approach_id(\\d+)/end", (req, res)=>{
+router.post("/approach/:approach_id(\\d+)/end", (req, res)=>{
     let approach_id = req.params.approach_id;
-    approachDao.finishApproach(approach_id, req.user_id).then( r => {
+    examApproachDao.finishApproach(approach_id, req.user_id).then( r => {
         if(r.success){
             res.status(200).json({
                 "detail": r.message
@@ -65,9 +65,9 @@ router.post("/:approach_id(\\d+)/end", (req, res)=>{
     });
 });
 
-router.get("/:approach_id(\\d+)/questions", (req, res)=>{
+router.get("/approach/:approach_id(\\d+)/questions", (req, res)=>{
     let approach_id = req.params.approach_id;
-    approachDao.getQuestionsForApproach(approach_id, req.user_id).then(function(result){
+    examApproachDao.getQuestionsForApproach(approach_id, req.user_id).then(function(result){
         if(result.success){
             res.status(200).json(result.questions);
         }
