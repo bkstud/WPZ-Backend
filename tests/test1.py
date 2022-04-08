@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-from cgi import test
 import requests
 
 BASE_URL = "http://localhost:3002"
