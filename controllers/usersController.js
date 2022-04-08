@@ -2,25 +2,26 @@ const express = require('express')
 const router = express.Router()
 const userDao = require('../dao/userDao')
 const jwtService = require('../services/jwtService')
-const{onClientError, onServerError} = require("./errorController");
+const{onClientError, onServerError} = require("./errorHandler");
 
 
 router.use(express.json())
+router.use(jwtService.verifyTokenAdmin);
 
-router.get('/', jwtService.verifyToken, (req, res) => {
+router.get('/', (req, res) => {
     userDao.getAllUsers()
         .then(users => res.json(users))
         .catch(err => onServerError(res, err))
 })
 
-router.get('/:id', jwtService.verifyToken, (req, res) => {
+router.get('/:id', (req, res) => {
 
     let user_id = req.params.id;
     userDao.getUserById(user_id)
         .then(
             user => {
                 if(user==null){
-                    onClientError(res, 404, `User with id ${user_id} not found`);
+                    onClientError(res, 404, `User with id ${user_id} not found.`);
                 }
                 else{
                     res.json(user);
@@ -29,19 +30,19 @@ router.get('/:id', jwtService.verifyToken, (req, res) => {
         .catch(err => onServerError(res, err))
 })
 
-router.post('/', jwtService.verifyToken, (req, res) => {
+router.post('/', (req, res) => {
     userDao.createUser(req.body)
         .then(res.redirect('/api/users'))
         .catch(err => onServerError(res, err))
 })
 
-router.delete('/:id', jwtService.verifyToken, (req, res) => {
+router.delete('/:id', (req, res) => {
     userDao.deleteUserById(req.params.id)
         .then(res.redirect('/api/users'))
         .catch(err => onServerError(res, err))
 })
 
-router.put('/', jwtService.verifyToken, (req,res) => {
+router.put('/', (req,res) => {
     userDao.updateUser(req.body)
         .then(res.redirect('/api/users'))
         .catch(err => onServerError(res, err))

@@ -4,10 +4,10 @@ const express = require('express');
 const router = express.Router();
 const approachDao = require("../dao/approachDao.js");
 //const onError = require("./errorController");
-const{onClientError, onServerError} = require("./errorController");
+const{onClientError, onServerError} = require("./errorHandler");
 const jwtService = require('../services/jwtService');
 
-router.use(express.json());
+//router.use(express.json());
 router.use(jwtService.verifyToken);
 
 router.get("/exam", (req, res)=>{
@@ -18,21 +18,16 @@ router.get("/exam", (req, res)=>{
 });
 
 
-
-function examNotFound(res, exam_id){
-    onClientError(res, 404, `Exam with id:${exam_id} not found`);
-}
-
 router.get("/exam/:exam_id(\\d+)", (req, res)=>{
     let exam_id = req.params.exam_id;
 
     approachDao.getExamWithApproachData(exam_id, req.user_id).then(
-        exam => {
-            if(exam==null){
-                examNotFound(res, exam_id);
+        exam_r => {
+            if(exam_r.success){
+                res.status(200).json(exam_r.exam)
             }
             else{
-                res.status(200).json(exam);
+                onClientError(res, exam_r.error_code, exam_r.message)
             }
         }
     ).catch(err => onServerError(res, err));
@@ -40,31 +35,46 @@ router.get("/exam/:exam_id(\\d+)", (req, res)=>{
 
 router.post("/exam/:exam_id(\\d+)/start", (req, res)=>{
     let exam_id = req.params.exam_id;
-    approachDao.startExam(exam_id, req.user_id).then(function(result){
-        if(result.success){
+    approachDao.startExam(exam_id, req.user_id).then(function(approach_r){
+        if(approach_r.success){
             res.status(200).json({
                 "detail":"Started the exam",
-                "exam_data": result.exam,
-                "questions": result.questions
+                "exam_data": approach_r.exam,
+                "questions": approach_r.questions,
+                "approach_id": approach_r.approach_id
             })
         }
-        else if(result.cause==0){
-            examNotFound(res, exam_id);
-        }
-        else if(result.cause==1){
-            onClientError(res, 409, "You have exhausted the number of approach to this exam.");
-        }
-        else if(result.cause==2){
-            onClientError(res, 425, "Too early, you cannot start this exam yet.");
-        }
-        else if(result.cause==3){
-            onClientError(res, 410, "Too late, the time to start this exam is over.");
-        }
         else{
-            onClientError(res, 400, "You cannot start this exam for unknown reason.");
+            onClientError(res, approach_r.error_code, approach_r.message);
         }
+        
     }).catch(err => onServerError(res, err));
 });
 
+router.post("/:approach_id(\\d+)/end", (req, res)=>{
+    let approach_id = req.params.approach_id;
+    approachDao.finishApproach(approach_id, req.user_id).then( r => {
+        if(r.success){
+            res.status(200).json({
+                "detail": r.message
+            });
+        }
+        else{
+            onClientError(res, r.error_code, r.message);
+        }
+    });
+});
+
+router.get("/:approach_id(\\d+)/questions", (req, res)=>{
+    let approach_id = req.params.approach_id;
+    approachDao.getQuestionsForApproach(approach_id, req.user_id).then(function(result){
+        if(result.success){
+            res.status(200).json(result.questions);
+        }
+        else{
+            onClientError(res, result.error_code, result.message);
+        }
+    }).catch(err => onServerError(res, err));
+});
 
 module.exports = router;

@@ -29,25 +29,24 @@ async function deleteUserById(userId) {
 }
 
 async function updateUser(data) {
-    let {id, username, password, name, surname, email} = data
     await User.update({
-        username,
-        password,
-        name,
-        surname, 
-        email
+        "username":data.username,
+        "admin":data.admin,
+        "password":data.password,
+        "name":data.name,
+        "surname":data.surname,
+        "email":data.email,
     }, {where: {id}})
 }
 
 async function createUser(data) {
-    let {username, password, name, surname, email} = data
-    console.log(data)
     await User.create({
-        username,
-        password,
-        name,
-        surname,
-        email
+        "username":data.username,
+        "admin":data.admin,
+        "password":data.password,
+        "name":data.name,
+        "surname":data.surname,
+        "email":data.email,
     })
 }
 

@@ -2,14 +2,47 @@
 
 const Exam = require("../models/Exam");
 
-const questionDao = require("./questionDao");
-
 async function getAllExams(){
     return await Exam.findAll();
 }
 
 async function getExam(pk){
-    return await Exam.findByPk(pk);
+
+    let exam = await Exam.findByPk(pk);
+    if(exam==null){
+        return {
+            "success":false,
+            "error_code":404,
+            "message":`Exam with id: ${pk} not found`
+        }
+    }
+    else {
+        return {
+            "success":true,
+            "exam":exam
+        }
+    }
+}
+
+async function getExamByTitle(title){
+
+    let exam = await Exam.findOne({where:{
+        title: title
+    }});
+
+    if(exam==null){
+        return {
+            "success":false,
+            "error_code":404,
+            "message":`Exam with title ${title} not found`
+        }
+    }
+    else {
+        return {
+            "success":true,
+            "exam":exam
+        }
+    }
 }
 
 async function deleteExam(exam_id,deleteApproaches=false){
@@ -32,12 +65,10 @@ function mCreateExam(exam_data){
 }
 
 
-async function createExam(){
-    let exam = mCreateExam();
-    await exam.save();
+async function createExam(exam_data){
+    let exam = mCreateExam(exam_data);
+    return await exam.save();
 }
-
-
 
 
 async function updateExam(exam_id, exam_data){
@@ -47,12 +78,13 @@ async function updateExam(exam_id, exam_data){
         await deleteExam(exam_id)
     }
     exam.id = exam_id;
-    await exam.save();
+    return await exam.save();
 }
 
 module.exports = {
     getAllExams,
     getExam,
+    getExamByTitle,
     createExam,
     updateExam,
     deleteExam,   

@@ -32,7 +32,7 @@ Question.init({
 },
 {
     sequelize:db,
-    timestamps:false}
-)
+});
+
 Question.sync();
 module.exports = Question;

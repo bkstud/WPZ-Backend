@@ -18,10 +18,26 @@ ExamApproach.init({
     user_id: {
         type: DataTypes.INTEGER,
         allowNull: false
+    },
+
+    finished: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
+    },
+    start_time: {
+        type: DataTypes.TIME,
+        allowNull: false,
+    },
+
+    finish_time: {
+        type: DataTypes.TIME,
+        allowNull: true,
     }
 },
 {
     sequelize:db,
+    timestamps:false,
 });
 
 ExamApproach.sync();

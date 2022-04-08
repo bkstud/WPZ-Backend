@@ -2,12 +2,12 @@
 const express = require('express');
 const router = express.Router();
 const questionDao = require("../dao/questionDao");
-const{onClientError, onServerError} = require("./errorController");
+const{onClientError, onServerError} = require("./errorHandler");
 
-const jwtService = require('../services/jwtService')
+const jwtService = require('../services/jwtService');
 
 router.use(express.json());
-router.use(jwtService.verifyToken);
+router.use(jwtService.verifyTokenAdmin);
 
 router.get("/", (req, res)=>{
     questionDao.getAllQuestions().then(
@@ -18,18 +18,46 @@ router.get("/", (req, res)=>{
 
 router.get("/:question_id(\\d+)", (req, res)=>{
     let question_id = req.params.question_id;
-    questionDao.getQuestionById(question_id).then(
-        q => {
-            if(q==null){
-                onClientError(res, 404, `Question with id ${question_id} not found`);
+    questionDao.getQuestion(question_id).then(
+        q_r => {
+            if(q_r.success){
+                res.status(200).json(q_r.question);
             }
             else{
-                res.status(200).json(q);
+                onClientError(res, q_r.error_code, q_r.message);
             }
         }
     ).catch(err => onServerError(res, err));
 });
 
+
+router.post("/", (req, res)=>{
+    questionDao.createQuestion(req.body).then(
+        q_r => {
+            if(q_r.success){
+                res.status(201).json(q_r.question);
+            }
+            else{
+                onClientError(res, q_r.error_code, q_r.message);
+            }
+        }
+    ).catch(err => onServerError(res, err));
+});
+
+router.put("/:question_id(\\d+)", (req, res)=>{
+    let question_id = req.params.question_id;
+    questionDao.updateQuestion(question_id, req.body).then(
+        q_r => {
+            if(q_r.success){
+                res.status(200).json(q_r.question);
+            }
+            else{
+                onClientError(res, q_r.error_code, q_r.message);
+            }
+        }
+
+    ).catch(err => onServerError(res, err));
+})
 
 router.get("/hello", (req, res)=>{
     res.status(200).send(`Hello ${req.user_id}`);

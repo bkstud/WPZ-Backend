@@ -2,19 +2,90 @@
 
 const Question = require("../models/Question");
 
-async function getAllQuestions(){
-    return await Question.findAll();
+function mHideTheSolution(q){
+
+    return {
+        "id": q.id,
+        "exam_id": q.exam_id,
+        "type": q.type,
+        "text": q.text,
+        "options": q.options.map(o => {return {
+            "id": o.id,
+            "text": o.text
+        }})
+    }
 }
 
-async function getQuestion(pk){
-    return await Question.findByPk(pk);
+
+async function getAllQuestions(hideTheSolution=false){    
+    let questions = await Question.findAll();
+    if(hideTheSolution){
+        questions = questions.map( q => mHideTheSolution(q));
+    }
+    
+    return questions;
 }
 
-async function getQuestionsForExam(exam_id){
-    return await Question.findAll({where: {"exam_id":exam_id}});
+async function getQuestion(pk, hideTheSolution=false){
+
+    let question = await Question.findByPk(pk);
+    if(question==null){
+        return {
+            "success": false,
+            "error_code": 404,
+            "message": `Question with id ${pk} not found.`
+        }
+    }
+
+    if(hideTheSolution){
+        question = mHideTheSolution(question);
+    }
+
+    return {
+        "success": true,
+        "question": question
+    }
 }
+
+async function getQuestionsByExamId(exam_id, hideTheSolution=false){
+    let questions = await Question.findAll({where: {"exam_id":exam_id}});
+    if(hideTheSolution){
+        questions = questions.map( q => mHideTheSolution(q));
+    }
+    return questions;
+}
+
+async function countQuestionsByExamId(exam_id){
+    return await Question.count({where: {"exam_id":exam_id}});
+}
+
 
 function mCreateQuestion(question_data){
+
+    if(!(typeof question_data.text === 'string' || question_data.text instanceof String)){
+        return {
+            "success": false,
+            "error_code": 400,
+            "message": "Question must have a string field 'text'"
+        }
+    }
+
+    if(!question_data.hasOwnProperty("type")){
+        return {
+            "success": false,
+            "error_code": 400,
+            "message": "Question must have an integer field 'type'"
+        }
+    }
+
+    if(! question_data.hasOwnProperty("exam_id")) {
+        return {
+            "success": false,
+            "error_code": 400,
+            "message": "Question must have an integer field 'exam_id'"
+        }
+    }
+    
     let q1 = Question.build({
         "exam_id": question_data.exam_id,
         "text": question_data.text,
@@ -24,17 +95,31 @@ function mCreateQuestion(question_data){
     q1.options = question_data.options;
 
     if(!Array.isArray(q1.options)){
-        throw "'options' field must be an array.";
+        return {
+            "success": false,
+            "error_code": 400,
+            "message": "'options' field must be an array."
+        }
     }
 
     let option_id_counter=1;
 
     for(let option of q1.options){
         if(!typeof option.correct === "boolean"){
-            throw "Each option must have a boolean field 'correct'";
+
+            return {
+                "success": false,
+                "error_code": 400,
+                "message": "Each option must have a boolean field 'correct'."
+            }
         }
         if(!(typeof option.text === 'string' || option.text instanceof String)){
-            throw "Each option must have a string field 'text'";
+            
+            return {
+                "success": false,
+                "error_code": 400,
+                "message": "Each option must have a string field 'text'."
+            }
         }
         if(option.hasOwnProperty("id")){
             option_id_counter = parseInt(id) + 1;
@@ -44,12 +129,18 @@ function mCreateQuestion(question_data){
             ++option_id_counter;
         }
     }
-    return q1;
+    return {
+        "success": true,
+        "question": q1
+    }
 }
 
 async function createQuestion(question_data){
-    let q1 = mCreateQuestion(question_data);
-    return await q1.save();
+    let q1_r = mCreateQuestion(question_data);
+    if(q1_r.success){
+        q1_r.question = await q1_r.question.save();
+    }
+    return q1_r;
 }
 
 async function deleteQuestion(question_id){
@@ -70,18 +161,26 @@ async function deleteExamQuestions(exam_id){
 }
 
 async function updateQuestion(question_id, question_data){
-    if(await getQuestionById(question_id)!=null){
-        await deleteQuestion(question_id);
+
+    let q1_r = mCreateQuestion(question_data);
+    if(q1_r.success){
+        let previous_question = await getQuestionById(question_id);
+        if(previous_question!=null){
+            let t = previous_question.createdAt;
+            await deleteQuestion(question_id);
+            q1_r.question.createdAt = t;
+        }
+        q1_r.question.id = question_id;
+        q1_r.question = await q1_r.question.save();
     }
-    let q1 = mCreateQuestion(question_data);
-    q1.id = question_id;
-    return await q1.save();
+    return q1_r;
 }
 
 module.exports = {
     getAllQuestions,
     getQuestion,
-    getQuestionsForExam,
+    getQuestionsByExamId,
+    countQuestionsByExamId,
     createQuestion,
     updateQuestion,
     deleteExamQuestions
