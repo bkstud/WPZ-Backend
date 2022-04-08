@@ -3,10 +3,13 @@
 const express = require('express');
 const router = express.Router();
 const examApproachDao = require("../dao/examApproachDao");
+const scoreDao = require("../dao/scoreDao");
+
+
 //const onError = require("./errorController");
 const{onClientError, onServerError} = require("./errorHandler");
-const jwtService = require('../services/jwtService');
 
+const jwtService = require('../services/jwtService');
 //router.use(express.json());
 router.use(jwtService.verifyToken);
 
@@ -73,6 +76,41 @@ router.get("/approach/:approach_id(\\d+)/questions", (req, res)=>{
         }
         else{
             onClientError(res, result.error_code, result.message);
+        }
+    }).catch(err => onServerError(res, err));
+});
+
+router.get("/approach/:approach_id(\\d+)/score", (req,res)=>{
+
+    let approach_id = req.params.approach_id;
+    scoreDao.getScoreForApproach(approach_id, req.user_id, req.user_admin, false).then(s_r => {
+        if(s_r.success){
+            res.status(200).json({
+                "exam_id": s_r.exam_id,
+                "max_points": s_r.max_points,
+                "score": s_r.score,
+            })
+        }
+        else{
+            onClientError(res, s_r.error_code, s_r.message);
+        }
+
+    }).catch(err => onServerError(res, err));
+});
+
+router.get("/approach/:approach_id(\\d+)/detailed_score", (req,res)=>{
+    let approach_id = req.params.approach_id;
+    scoreDao.getScoreForApproach(approach_id, req.user_id, req.user_admin, true).then(s_r => {
+        if(s_r.success){
+            res.status(200).json({
+                "exam_id": s_r.exam_id,
+                "max_points": s_r.max_points,
+                "score": s_r.score,
+                "detailed_score": s_r.detailed_score
+            })
+        }
+        else{
+            onClientError(res, s_r.error_code, s_r.message);
         }
     }).catch(err => onServerError(res, err));
 });

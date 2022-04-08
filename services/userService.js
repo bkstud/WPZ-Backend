@@ -10,6 +10,17 @@ async function authenticate(username, password) {
     return await bcrypt.compare(password, user.password)
 }
 
+async function authenticateAndGetUser(username, password) {
+    const user = await userDao.getUserByUsername(username);
+    if(user == null) {
+        return null;
+    }
+
+    let success = await bcrypt.compare(password, user.password);
+    return success ? user : null;
+}
+
+
 async function createUser(req, res, next) {
     if(await isUserInfoValid(req.body)) {
         req.body.password = await bcrypt.hash(req.body.password, 10)
@@ -51,5 +62,5 @@ function isEmailValid(email) {
 
 
 module.exports = {
-    createUser, authenticate
+    createUser, authenticate, authenticateAndGetUser
 }

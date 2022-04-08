@@ -23,15 +23,13 @@ async function verifyBasicAuth(req){
     const login = strauth.substring(0, splitIndex);
     const password = strauth.substring(splitIndex + 1);
 
+    const user = await userService.authenticateAndGetUser(login, password);
+    if(user==null) return false;
 
-    if(await userService.authenticate(login ,password)){
-        const user = await userDao.getUserByUsername(login);
-        req.user_id = user.id;
-        req.user_login = user.username;
-        req.user_admin = user.admin;
-        return true;
-    }
-    return false;
+    req.user_id = user.id;
+    req.user_login = user.username;
+    req.user_admin = user.admin;
+    return true;
 }
 
 

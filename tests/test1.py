@@ -112,13 +112,13 @@ if status!=200:
 
 
 #Wynik podejścia
-status, r_json = test_get("/api/score/approach/{}".format(approach_id))
+status, r_json = test_get("/api/exam/approach/{}/score".format(approach_id))
 
 if status!=200:
     exit(0)
 
 
 #Wynik podejścia szczegółowy
-status, r_json = test_get("/api/score/approach/{}/detailed".format(approach_id))
+status, r_json = test_get("/api/exam/approach/{}/detailed_score".format(approach_id))
 
 
