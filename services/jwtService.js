@@ -17,7 +17,7 @@ async function verifyBasicAuth(req){
     const b64auth = (req.headers.authorization || '').split(' ')[1] || '';
     const strauth = Buffer.from(b64auth, 'base64').toString();
 
-    if(strauth==null || strauth=="")return null;
+    if(strauth==null || strauth=="")return false;
     const splitIndex = strauth.indexOf(':');
 
     const login = strauth.substring(0, splitIndex);
