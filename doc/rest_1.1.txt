@@ -19,19 +19,19 @@ Przykład: exams.json
 Pytanie numerujemy od 1.
 
 
-GET /api/exam/14
+GET /api/exams/14
 Zwraca egzamin o id 14.
 Zwraca jeden element z exams.json a nie liste.
 
 
-POST /api/exam/14/start
+POST /api/exams/14/start
 Rozpoczyna egzamin, tworzy nowe podejście dla danego egzaminu, zwraca id podejścia
 (approach_id)
 
 # przykład -> exam_start.json
 
 
-POST /api/exam/approach/146/end
+POST /api/exams/approach/146/end
 Kończy podejście o id 146, nie zwraca nic konkretnego, typu:
 {
  "detail":"Your approach to the exam is over."
@@ -65,7 +65,7 @@ zwracamy statuc code 410 (gone) z odpowiednim komunikatem:
 # Na przykład po niechcącemu zamknięciu przegląrki
 # Zwraca listę pytań dla trwającego podejścia 146
 
-GET /api/exam/approach/146/questions
+GET /api/exams/approaches/146/questions
 
 Przykład: questions.json
 
@@ -74,7 +74,7 @@ type 0 -> jednokrotnego wyboru
 type 1 -> wielokrotnego wyboru
 
 
-POST /api/answer
+POST /api/answers
 
 W request body JSON jak odpowiednio:
 "answer.json"  - dla pytania (Jak pytanie jest jednokrotnego wyboru to lista z jednym elementem.).
@@ -87,7 +87,7 @@ Dostęp po wykonaniu POST /api/end:
 Dostęp po zakończeniu podejścia:
 
 
-GET /api/exam/approach/146/score
+GET /api/exams/approaches/146/score
  ! UWAGA, trzeba sprawdzać na back-endzie czy użytkownik podaje swoje podejście,
  ! jak przy udzielaniu odpowiedzi, w przeciwnym razie status code 403.
 
@@ -102,7 +102,7 @@ na 2 z nich użytkownik odpowiedział dobrze, na jedno błędnie:
     "score":2
 }
 
-GET /api/exam/approach/146/detailed_score
+GET /api/exams/approaches/146/detailed_score
 Wynik ze szczegółami dla danego podejścia
 
 Przykład: "score.json"

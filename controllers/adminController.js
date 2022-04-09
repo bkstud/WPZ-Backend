@@ -6,7 +6,7 @@ const admin_router = express.Router();
 
 admin_router.use(jwtService.verifyTokenAdmin);
 
-admin_router.use("/user", require("./admin/usersController"));
-admin_router.use("/question", require("./admin/questionController"));
+admin_router.use("/users", require("./admin/usersController"));
+admin_router.use("/questions", require("./admin/questionController"));
 
 module.exports = admin_router

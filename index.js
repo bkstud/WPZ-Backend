@@ -13,8 +13,8 @@ db.authenticate()
 app.use('/api/auth', require('./controllers/loginRegisterController'));
 app.use('/api/admin', require('./controllers/adminController'));
 
-app.use('/api/exam', require("./controllers/examApproachController"));
-app.use('/api/answer',  require("./controllers/answerController"));
+app.use('/api/exams', require("./controllers/examApproachController"));
+app.use('/api/answers',  require("./controllers/answerController"));
 
 const jwtService = require("./services/jwtService");
 

@@ -54,7 +54,7 @@ router.post("/:exam_id(\\d+)/start", (req, res)=>{
     }).catch(err => onServerError(res, err));
 });
 
-router.post("/approach/:approach_id(\\d+)/end", (req, res)=>{
+router.post("/approaches/:approach_id(\\d+)/end", (req, res)=>{
     let approach_id = req.params.approach_id;
     examApproachDao.finishApproach(approach_id, req.user_id).then( r => {
         if(r.success){
@@ -68,7 +68,7 @@ router.post("/approach/:approach_id(\\d+)/end", (req, res)=>{
     });
 });
 
-router.get("/approach/:approach_id(\\d+)/questions", (req, res)=>{
+router.get("/approaches/:approach_id(\\d+)/questions", (req, res)=>{
     let approach_id = req.params.approach_id;
     examApproachDao.getQuestionsForApproach(approach_id, req.user_id).then(function(result){
         if(result.success){
@@ -80,7 +80,7 @@ router.get("/approach/:approach_id(\\d+)/questions", (req, res)=>{
     }).catch(err => onServerError(res, err));
 });
 
-router.get("/approach/:approach_id(\\d+)/score", (req,res)=>{
+router.get("/approaches/:approach_id(\\d+)/score", (req,res)=>{
 
     let approach_id = req.params.approach_id;
     scoreDao.getScoreForApproach(approach_id, req.user_id, req.user_admin, false).then(s_r => {
@@ -98,7 +98,7 @@ router.get("/approach/:approach_id(\\d+)/score", (req,res)=>{
     }).catch(err => onServerError(res, err));
 });
 
-router.get("/approach/:approach_id(\\d+)/detailed_score", (req,res)=>{
+router.get("/approaches/:approach_id(\\d+)/detailed_score", (req,res)=>{
     let approach_id = req.params.approach_id;
     scoreDao.getScoreForApproach(approach_id, req.user_id, req.user_admin, true).then(s_r => {
         if(s_r.success){
