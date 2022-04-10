@@ -20,7 +20,7 @@ router.get("/approach/:approach_id(\\d+)", (req, res)=>{
             })
         }
         else{
-            onClientError(res, s_r.error_code, s_r.message);
+            onClientError(res, s_r.status_code, s_r.message);
         }
 
     }).catch(err => onServerError(res, err));
@@ -39,7 +39,7 @@ router.get("/approach/:approach_id(\\d+)/detailed", (req, res)=>{
             })
         }
         else{
-            onClientError(res, s_r.error_code, s_r.message);
+            onClientError(res, s_r.status_code, s_r.message);
         }
     }).catch(err => onServerError(res, err));
 });

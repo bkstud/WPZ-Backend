@@ -31,11 +31,27 @@ async function mCollectExamData(exam_in, user_id){
     const approaches = await ExamApproach.findAll(
         {where:{"user_id":user_id}});
 
-    let approaches_remaining = exam.max_approaches - approaches.length;
-    if(approaches_remaining<0)approaches_remaining=0;
+    if(exam.max_approaches >= 0){
+        let approaches_remaining = exam.max_approaches - approaches.length;
+        if(approaches_remaining<0)approaches_remaining=0;
 
-    exam.approaches_remaining = approaches_remaining;
-    exam.can_start = approaches_remaining > 0;
+        exam.approaches_remaining = approaches_remaining;
+        exam.can_start = approaches_remaining > 0;
+    }
+    else{
+        exam.max_approaches = -1;
+        exam.approaches_remaining = -1;
+        exam.can_start = true;
+    }
+
+    if(exam.can_start){
+        if(exam.start_time!=null && Date.now() < exam.start_time){
+            exam.can_start = false;
+        }
+        else if(exam.end_time!=null && Date.now() > exam.end_time){
+            exam.can_start = false;
+        }
+    }
 
     exam.approaches_in_progress = approaches.filter(a=>!a.finished).map(a=>a.id);
     exam.finished_approaches = approaches.filter(a=>a.finished).map(a=>a.id);
@@ -68,7 +84,7 @@ async function getApproach(approach_id, user_id, finished=false, user_admin=fals
     if(approach==null){
         return {
             "success": false,
-            "error_code": 404,
+            "status_code": 404,
             "message": `Approach with id: ${approach} not found.`
         }
     }
@@ -77,21 +93,21 @@ async function getApproach(approach_id, user_id, finished=false, user_admin=fals
         if(approach.user_id!=user_id){
             return {
                 "success": false,
-                "error_code": 403,
+                "status_code": 403,
                 "message": `This approach does not belong to you.`
             }
         }
         else if(!finished && approach.finished){
             return {
                 "success": false,
-                "error_code": 410,
+                "status_code": 410,
                 "message": `Approach with id: ${approach} is finished.`
             }
         }
         else if(finished && !approach.finished){
             return {
                 "success": false,
-                "error_code": 425,
+                "status_code": 425,
                 "message": `Approach with id: ${approach} is not finished yet.`
             }
         }
@@ -114,30 +130,36 @@ async function startExam(exam_id, user_id){
     {
         return {
             "success": false,
-            "error_code": 409,
+            "status_code": 409,
             "message": `There is already approach in progress with id: ${exam.approaches_in_progress[0]} to this exam`
         }
     }
-
-    else if(!exam.can_start){
+    else if(exam.approaches_remaining==0){
         return {
             "success": false,
-            "error_code": 409,
+            "status_code": 409,
             "message": "You have exhausted the number of approaches to this exam.",
         }
     }
     else if(exam.start_time!=null && Date.now() < exam.start_time){
         return {
             "success": false,
-            "error_code": 425,
+            "status_code": 425,
             "message": "Too early, you cannot start this exam yet."
         }
     }
     else if(exam.end_time!=null && Date.now() > exam.end_time){
         return {
             "success":false,
-            "error_code": 410,
+            "status_code": 410,
             "message": "Too late, the time to start this exam is over."
+        }
+    }
+    else if(!exam.can_start){
+        return {
+            "success": false,
+            "status_code": 403,
+            "message": "You cannot start this exam."
         }
     }
     else{

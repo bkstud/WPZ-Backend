@@ -20,7 +20,7 @@ router.post("/", (req, res)=>{
                 })
             }
             else{
-                onClientError(res, a_r.error_code, a_r.message);
+                onClientError(res, a_r.status_code, a_r.message);
             }
         }
     ).catch(err => onServerError(res, err));

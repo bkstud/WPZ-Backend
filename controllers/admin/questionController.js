@@ -26,7 +26,7 @@ router.get("/:question_id(\\d+)", (req, res)=>{
                 res.status(200).json(q_r.question);
             }
             else{
-                onClientError(res, q_r.error_code, q_r.message);
+                onClientError(res, q_r.status_code, q_r.message);
             }
         }
     ).catch(err => onServerError(res, err));
@@ -40,7 +40,7 @@ router.post("/", (req, res)=>{
                 res.status(201).json(q_r.question);
             }
             else{
-                onClientError(res, q_r.error_code, q_r.message);
+                onClientError(res, q_r.status_code, q_r.message);
             }
         }
     ).catch(err => onServerError(res, err));
@@ -54,7 +54,7 @@ router.put("/:question_id(\\d+)", (req, res)=>{
                 res.status(200).json(q_r.question);
             }
             else{
-                onClientError(res, q_r.error_code, q_r.message);
+                onClientError(res, q_r.status_code, q_r.message);
             }
         }
 

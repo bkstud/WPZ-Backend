@@ -30,7 +30,7 @@ router.get("/:exam_id(\\d+)", (req, res)=>{
                 res.status(200).json(exam_r.exam)
             }
             else{
-                onClientError(res, exam_r.error_code, exam_r.message)
+                onClientError(res, exam_r.status_code, exam_r.message)
             }
         }
     ).catch(err => onServerError(res, err));
@@ -48,7 +48,7 @@ router.post("/:exam_id(\\d+)/start", (req, res)=>{
             })
         }
         else{
-            onClientError(res, approach_r.error_code, approach_r.message);
+            onClientError(res, approach_r.status_code, approach_r.message);
         }
         
     }).catch(err => onServerError(res, err));
@@ -63,7 +63,7 @@ router.post("/approaches/:approach_id(\\d+)/end", (req, res)=>{
             });
         }
         else{
-            onClientError(res, r.error_code, r.message);
+            onClientError(res, r.status_code, r.message);
         }
     });
 });
@@ -75,7 +75,7 @@ router.get("/approaches/:approach_id(\\d+)/questions", (req, res)=>{
             res.status(200).json(result.questions);
         }
         else{
-            onClientError(res, result.error_code, result.message);
+            onClientError(res, result.status_code, result.message);
         }
     }).catch(err => onServerError(res, err));
 });
@@ -92,7 +92,7 @@ router.get("/approaches/:approach_id(\\d+)/score", (req,res)=>{
             })
         }
         else{
-            onClientError(res, s_r.error_code, s_r.message);
+            onClientError(res, s_r.status_code, s_r.message);
         }
 
     }).catch(err => onServerError(res, err));
@@ -110,7 +110,7 @@ router.get("/approaches/:approach_id(\\d+)/detailed_score", (req,res)=>{
             })
         }
         else{
-            onClientError(res, s_r.error_code, s_r.message);
+            onClientError(res, s_r.status_code, s_r.message);
         }
     }).catch(err => onServerError(res, err));
 });

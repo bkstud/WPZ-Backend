@@ -25,7 +25,7 @@ async function postAnswer(user_id, answer_data){
     if(!answer_data.hasOwnProperty("approach_id")){
         return {
             "success": false,
-            "error_code": 400,
+            "status_code": 400,
             "message": "Answer must have an integer field 'approach_id'"
         }
     }
@@ -33,7 +33,7 @@ async function postAnswer(user_id, answer_data){
     if(!answer_data.hasOwnProperty("question_id")){
         return {
             "success": false,
-            "error_code": 400,
+            "status_code": 400,
             "message": "Answer must have an integer field 'question_id'"
         }
     }
@@ -41,7 +41,7 @@ async function postAnswer(user_id, answer_data){
     if(!Array.isArray(answer_data.chosen_options)){
         return {
             "success": false,
-            "error_code": 400,
+            "status_code": 400,
             "message": "Answer must have an array field 'chosen_options'"
         }
     }
@@ -77,11 +77,10 @@ async function postAnswer(user_id, answer_data){
         return true;
     }
 
-    let approach = approach_r.approach;
+    //let approach = approach_r.approach;
     let question = question_r.question;
     let answer = Answer.build({
         "user_id":user_id,
-        "exam_id":approach.exam_id,
         "approach_id":approach_id,
         "question_id":question_id,
         "correct": checkIfCorrect(question, answer_data)
@@ -89,13 +88,23 @@ async function postAnswer(user_id, answer_data){
 
     answer.chosen_options = answer_data.chosen_options;
 
-    let previousAnswer = await Answer.findOne(
-        {where: {"question_id":question_id}
-        });
+    /*
+    Sprawdzam, czy użytkownik udzielił już odpowiedzi na to pytanie w tej samej sesji,
+    jeśli tak, to trzeba tę odpowiedź usunąć.
+    (user_id nie trzeba sprawdzać, bo wynika funkcyjnie od approach_id)
+    */
+    let previousAnswers = await Answer.findAll(
+        {where: {
+            "approach_id": approach_id,
+            "question_id": question_id,
+        }});
 
-    if(previousAnswer!=null){
+    if(previousAnswers.length != 0){
         await Answer.destroy({
-            where: {"question_id":question_id}
+            where: {
+                "approach_id": approach_id,
+                "question_id":question_id,
+            }
         });
     }
 

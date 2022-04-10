@@ -12,7 +12,7 @@ async function getExam(pk){
     if(exam==null){
         return {
             "success":false,
-            "error_code":404,
+            "status_code":404,
             "message":`Exam with id: ${pk} not found`
         }
     }
@@ -33,7 +33,7 @@ async function getExamByTitle(title){
     if(exam==null){
         return {
             "success":false,
-            "error_code":404,
+            "status_code":404,
             "message":`Exam with title ${title} not found`
         }
     }

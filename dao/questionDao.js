@@ -32,7 +32,7 @@ async function getQuestion(pk, hideTheSolution=false){
     if(question==null){
         return {
             "success": false,
-            "error_code": 404,
+            "status_code": 404,
             "message": `Question with id ${pk} not found.`
         }
     }
@@ -65,7 +65,7 @@ function mCreateQuestion(question_data){
     if(!(typeof question_data.text === 'string' || question_data.text instanceof String)){
         return {
             "success": false,
-            "error_code": 400,
+            "status_code": 400,
             "message": "Question must have a string field 'text'"
         }
     }
@@ -73,7 +73,7 @@ function mCreateQuestion(question_data){
     if(!question_data.hasOwnProperty("type")){
         return {
             "success": false,
-            "error_code": 400,
+            "status_code": 400,
             "message": "Question must have an integer field 'type'"
         }
     }
@@ -81,7 +81,7 @@ function mCreateQuestion(question_data){
     if(! question_data.hasOwnProperty("exam_id")) {
         return {
             "success": false,
-            "error_code": 400,
+            "status_code": 400,
             "message": "Question must have an integer field 'exam_id'"
         }
     }
@@ -97,7 +97,7 @@ function mCreateQuestion(question_data){
     if(!Array.isArray(q1.options)){
         return {
             "success": false,
-            "error_code": 400,
+            "status_code": 400,
             "message": "'options' field must be an array."
         }
     }
@@ -109,7 +109,7 @@ function mCreateQuestion(question_data){
 
             return {
                 "success": false,
-                "error_code": 400,
+                "status_code": 400,
                 "message": "Each option must have a boolean field 'correct'."
             }
         }
@@ -117,7 +117,7 @@ function mCreateQuestion(question_data){
             
             return {
                 "success": false,
-                "error_code": 400,
+                "status_code": 400,
                 "message": "Each option must have a string field 'text'."
             }
         }
