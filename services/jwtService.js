@@ -83,11 +83,44 @@ function verifyTokenAdmin(req, res, next){
 
 function generateToken(user) {
     const {username, user_id, admin} = user
-    return jwt.sign({username, user_id}, process.env.JWT_SECRET)
+    return jwt.sign({username, user_id, admin}, process.env.JWT_SECRET)
+}
+
+async function login(json_data){
+    
+    if(!json_data.hasOwnProperty("username")){
+        return {
+            "success": false,
+            "status_code": 400,
+            "message": "'username' field required."
+        }
+    }
+    if(!json_data.hasOwnProperty("password")){
+        return {
+            "success": false,
+            "status_code": 400,
+            "message": "'password' field required."
+        }
+    }
+    let user = await userService.authenticateAndGetUser(json_data.username, json_data.password);
+    if(user==null){
+        return {
+            "success": false,
+            "status_code": 403,
+            "message":"Incorrect login or password."
+        }
+    }
+    else{
+        return {
+            "success": true,
+            "token": generateToken(user)
+        }
+    }
 }
 
 module.exports = {
     verifyToken,
     verifyTokenAdmin,
-    generateToken
+    generateToken,
+    login
 }
