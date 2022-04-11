@@ -19,8 +19,7 @@ router.post('/register', (req, res) => {
             let created_user = user_r.user;
             res.status(201).json({
                 "detail": "Created new user",
-                "user_id": created_user.id,
-                "username": created_user.username,
+                "user_data": userService.getUserData(created_user)
             });
         }
         else{
