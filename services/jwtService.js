@@ -113,7 +113,8 @@ async function login(json_data){
     else{
         return {
             "success": true,
-            "token": generateToken(user)
+            "token": generateToken(user),
+            "admin": user.admin
         }
     }
 }

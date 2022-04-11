@@ -5,7 +5,7 @@ BASE_URL = "http://localhost:3002"
 
 session = requests.Session()
 
-def test_post(url, json_data):
+def post_json(url, json_data):
     full_url = BASE_URL + url
     print("POST "+full_url)
 
@@ -21,7 +21,7 @@ def test_post(url, json_data):
 
 # Logowanie, uzyskiwanie tokenu
 
-status, json_r = test_post("/api/auth/login", {
+status, json_r = post_json("/api/auth/login", {
     "username": "janusz_nosacz",
     "password": "janusz123"
 })
