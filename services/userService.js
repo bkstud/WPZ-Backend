@@ -22,6 +22,17 @@ async function authenticateAndGetUser(username, password) {
     return success ? user : null;
 }
 
+function getUserData(user_in){
+    return {
+        "id":user_in.id,
+        "username": user_in.username,
+        "admin": user_in.admin,
+        "name": user_in.name,
+        "surname": user_in.surname,
+        "email": user_in.email
+    }
+}
+
 module.exports = {
-    authenticate, authenticateAndGetUser
+    authenticate, authenticateAndGetUser, getUserData
 }

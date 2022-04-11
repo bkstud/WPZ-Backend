@@ -11,7 +11,6 @@ Dodałem basic auth jako drugą metodę autentyfikacji (fallback).
 Głównie do testowania api
 */
 const userService = require("./userService");
-const userDao = require('../dao/userDao');
 
 async function verifyBasicAuth(req){
     const b64auth = (req.headers.authorization || '').split(' ')[1] || '';
@@ -114,7 +113,7 @@ async function login(json_data){
         return {
             "success": true,
             "token": generateToken(user),
-            "admin": user.admin
+            "user_data": userService.getUserData(user)
         }
     }
 }
