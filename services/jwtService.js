@@ -62,7 +62,7 @@ function mVerifyToken(req, res, next, admin_perm_required=false) {
 
             } else {
                 req.user_login = data.username;
-                req.user_id = data.user_id;
+                req.user_id = data.id;
                 req.user_admin = data.admin;
                 n1();
             }
@@ -82,8 +82,8 @@ function verifyTokenAdmin(req, res, next){
 }
 
 function generateToken(user) {
-    const {username, user_id, admin} = user
-    return jwt.sign({username, user_id, admin}, process.env.JWT_SECRET)
+    const {username, id, admin} = user
+    return jwt.sign({username, id, admin}, process.env.JWT_SECRET)
 }
 
 async function login(json_data){
