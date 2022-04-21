@@ -1,25 +1,60 @@
+'use strict';
+
 const express = require('express')
 const router = express.Router()
-const userService = require('../services/userService')
 const userDao = require('../dao/userDao')
 const jwtService = require('../services/jwtService')
+const userService = require('../services/userService')
 require('dotenv').config({ path: 'config/.env'})
+
+const{onClientError} = require("./errorHandler");
+
 
 router.use(express.json())
 
-router.post('/register', userService.createUser, (req, res) => {
-    res.sendStatus(200)
-})
+router.post('/register', (req, res) => {
 
-router.post('/login', async (req, res) => {
-    const {username, password} = req.body
-    if(await userService.authenticate(username, password)) {
-        const user = await userDao.getUserByUsername(username)
-        const token = jwtService.generateToken(user)
-        res.json({token})
-    } else {
-        res.sendStatus(403)
-    }
-})
+    userDao.createUser(req.body, false).then(user_r => {
+        if(user_r.success){
+            let created_user = user_r.user;
+            res.status(201).json({
+                "detail": "Created new user",
+                "user_data": userService.getUserData(created_user)
+            });
+        }
+        else{
+            onClientError(res, user_r.status_code, user_r.message);
+        }
+    }).catch(err => onServerError(res, err));
+});
 
-module.exports = router
+
+
+router.post("/login", (req, res) => {
+
+    jwtService.login(req.body).then(token_r=>{
+        if(token_r.success){
+            res.status(200).json({
+                "token": token_r.token,
+                "user_data": token_r.user_data
+            });
+        }
+        else{
+            onClientError(res, token_r.status_code, token_r.message);
+        }
+    }).catch(err => onServerError(res, err));
+});
+
+router.get("/my_account", jwtService.verifyToken, (req, res)=>{
+    userDao.getUserById(req.user_id).then(user_r=>{
+        if(user_r.success){
+            res.status(200).json(userService.getUserData(user_r.user));
+        }
+        else{
+            onClientError(res, user_r.status_code, user_r.message);
+        }
+    }).catch(err => onServerError(res, err));
+});
+
+
+module.exports = router;
