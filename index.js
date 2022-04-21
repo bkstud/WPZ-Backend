@@ -3,12 +3,15 @@
 
 const express = require('express');
 const db = require('./config/database');
+const cors = require('cors')
 
 const app = express();
 
 db.authenticate()
   .then(() => console.log('Database connected'))
   .catch(() => console.log("Error: ", err))
+
+app.use(cors())
 
 app.use('/api/auth', require('./controllers/loginRegisterController'));
 app.use('/api/admin', require('./controllers/adminController'));
