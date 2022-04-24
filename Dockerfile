@@ -1,12 +1,11 @@
 
 FROM node:latest
 
-WORKDIR /home/node
-
+WORKDIR /home/project
 COPY ["package.json", "package-lock.json*", "./"]
 
-RUN npm install
+RUN npm install 
+RUN npm config set scripts-prepend-node-path auto
 
 WORKDIR /app
-ENV NODE_PATH=/home/node/node_modules
-CMD ["npm", "start"]
+CMD ["./start.sh"]
