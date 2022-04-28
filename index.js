@@ -13,11 +13,11 @@ db.authenticate()
 
 app.use(cors())
 
-app.use('/api/auth', require('./controllers/loginRegisterController'));
-app.use('/api/admin', require('./controllers/adminController'));
+app.use('/api/auth', require('./routers/loginRegisterRouter'));
+app.use('/api/admin', require('./routers/adminRouter'));
 
-app.use('/api/exams', require("./controllers/examApproachController"));
-app.use('/api/answers',  require("./controllers/answerController"));
+app.use('/api/exams', require("./routers/examApproachRouter"));
+app.use('/api/answers',  require("./routers/answerRouter"));
 
 const jwtService = require("./services/jwtService");
 
