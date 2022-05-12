@@ -56,6 +56,14 @@ table.bt th, table.bt td{
     padding: 5px;
 }
 
+.zp{
+    padding: 0px;
+}
+
+.border_bottom1 {
+    border-bottom: 1px solid black;
+    padding: 5px;
+}
 
     </style>
     <script src="create_exam_app.js"></script>
@@ -109,18 +117,17 @@ table.bt th, table.bt td{
 
         </table>
         <div>
-            <button type="submit" class="btn1">POST_EXAM</button>
+           
         </div>
         
     </div>
-    
-</form>
+
 
 <div name="questions">
     <table class="bt">
         <tr>
-            <th>Pytanie</th>
-            <th>Odpowiedzi</th>
+            <th>Question</th>
+            <th>options</th>
             <th></th>
         </tr>
 
@@ -137,8 +144,12 @@ table.bt th, table.bt td{
     </table>
 
     <button type="button" name="new_question">New question</button>
-
+    <br/>
+    <br/>
+    <button type="submit" class="btn1">Create exam</button>
 </div>
+
+</form>
 </div>
 
 <div style="display: none;" title="Option form" id="question_option_dialog_window">

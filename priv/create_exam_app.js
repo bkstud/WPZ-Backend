@@ -29,6 +29,7 @@ class CreateExamApp{
         }
 
         this.prepareQuestionDialogWindow();
+        this.prepareOptionDialogWindow();
 
         this.questions_div = this.examDiv.querySelector("div[name='questions']");
         this.questions_table = this.questions_div.querySelector("table");
@@ -71,12 +72,13 @@ class CreateExamApp{
         let start_time = fd.get("start_time");
         let end_time = fd.get("end_time");
 
-        let exam = {title, max_approaches, start_time, end_time};
+        let questions = this.questions;
+        let exam = {title, max_approaches, start_time, end_time, questions};
         this.postExam(exam);
     }
 
     createQuestion(question){
-
+        let _this = this;
         let internal_id = null;
 
         if(question.hasOwnProperty("id")){
@@ -87,37 +89,58 @@ class CreateExamApp{
             ++this.question_internal_id_counter;
         }
 
-        if(question.hasOwnProperty("options")){
+        question.internal_id = internal_id;
+        this.questions.push(question);
+        let row = this.questions_table.insertRow(-1);
+        let cell0 = row.insertCell(0);
+        cell0.innerText = question.text;
+        
+        let cell1 = row.insertCell(1);
+        cell1.style.padding = "0px";
 
+        let tmp = document.createElement("div");
+        tmp.setAttribute("name", "options_list");
+        cell1.appendChild(tmp);
+
+        let cell2 = row.insertCell(2);
+        let delete_button = document.createElement("button");
+        delete_button.type = "button";
+        delete_button.innerText = "delete question";
+        delete_button.onclick = function(){
+            _this.deleteQuestion(internal_id);
+        }
+
+        cell2.appendChild(delete_button);
+
+        let div1 = document.createElement("div");
+        div1.style.padding="5px";
+
+        let btn = document.createElement("button");
+        btn.type = "button";
+        btn.innerText = "Add option";
+        btn.onclick = function(){
+            _this.showOptionsDialogWindow(internal_id);
+        }
+
+        div1.appendChild(btn);
+        cell1.appendChild(div1);
+
+        row.setAttribute("name", internal_id);
+
+        if(question.hasOwnProperty("options")){
+            for(let o of question.options){
+                this.createQuestionOption(o, internal_id, row);
+            }
         }
         else{
             question.options = [];
         }
 
-        question.internal_id = internal_id;
-        this.questions.push(question);
-        let row = this.questions_table.insertRow(-1);
-        let cell1 = row.insertCell(0);
-        cell1.innerText = question.text;
-        let cell2 = row.insertCell(1);
-
-        let tmp = document.createElement("div");
-        tmp.setAttribute("name", "options_list");
-        tmp.innerText = "Sample text";
-        cell2.appendChild(tmp);
-
-        let btn = document.createElement("button");
-        btn.innerText = "Add option";
-        cell2.appendChild(btn);
-
-        //cell2.innerText = "Sample text";
-
-        row.setAttribute("name", internal_id);
         console.log(question);
     }
 
-    createQuestionOption(question_option){
-        let q_internal_id = this._selected_question_internal_id;
+    createQuestionOption(question_option, q_internal_id, table_row=null){
+        //let q_internal_id = this._selected_question_internal_id;
         let internal_id = null;
         if(question_option.hasOwnProperty("id")){
             internal_id = `${q_internal_id}O${question_option.id}`;
@@ -129,10 +152,17 @@ class CreateExamApp{
 
         let question = this.questions.find(a=>a.internal_id==q_internal_id);
         question.options.push(question_option);
+        if(table_row==null){
+            table_row = this.questions_table.querySelector(`tr[name='${q_internal_id}']`);
+        }
 
-        let row = this.questions_table.querySelector(`tr[name='${q_internal_id}']`);
-        if(row!=null){
-            let options_list_div = row.cells[1].querySelector("div[name='options_list']");
+        if(table_row!=null){
+            let options_list_div = table_row.cells[1].querySelector("div[name='options_list']");
+
+            let option_div = document.createElement("div");
+            option_div.classList.add("border_bottom1");
+            option_div.setAttribute("name", internal_id);
+
             let s = document.createElement("span");
             if(question_option.correct){
                 s.classList += "good";
@@ -140,9 +170,39 @@ class CreateExamApp{
             else{
                 s.classList += "bad";
             }
+
             s.innerText = question_option.text;
-            options_list_div.appendChild(s);
+
+            let delete_button = document.createElement("button");
+            delete_button.type="button";
+            delete_button.innerText = "Delete";
+            let _this = this;
+            delete_button.onclick = function(){
+                _this.deleteQuestionOption(q_internal_id, internal_id);
+            }
+
+            option_div.appendChild(s);
+            option_div.appendChild(delete_button);
+
+            options_list_div.appendChild(option_div);
         }
+    }
+
+    deleteQuestion(question_internal_id){
+        this.questions = this.questions.filter(q => q.internal_id!=question_internal_id);
+        let row = this.questions_table.querySelector(`tr[name='${question_internal_id}']`);
+        row.remove();
+    }
+
+
+
+    deleteQuestionOption(question_internal_id, option_internal_id){
+        let question = this.questions.find(q=>q.internal_id==question_internal_id);
+        question.options = question.options.filter(o=>o.internal_id!=option_internal_id);
+
+        let row = this.questions_table.querySelector(`tr[name='${question_internal_id}']`);
+        let option_div = row.querySelector(`div[name='${option_internal_id}']`);
+        option_div.remove();
     }
 
 
@@ -190,7 +250,7 @@ class CreateExamApp{
 
             let q_option = {text, correct};
 
-            _this.createQuestionOption(q_option);
+            _this.createQuestionOption(q_option, _this._selected_question_internal_id);
             _this.question_option_dialog_window.dialog("close");
         }
 
@@ -214,14 +274,6 @@ class CreateExamApp{
 
     postExam(exam){
         console.log(exam);
-    }
-
-
-    _addQuestionOptionDescription(o){
-        let s = document.createElement("span");
-        s.classList.add(s.correct? "good": "bad");
-        s.innerText = o.text;
-        this.desc2.appendChild(s);
     }
 
 }
