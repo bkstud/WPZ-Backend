@@ -1,9 +1,13 @@
 <!DOCTYPE html>
-<html lang="pl_PL">
+<html>
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Tymczasowy formularz do tworzenia egzaminów</title>
+    <title>Temporary form to create exams</title>
+
+    <link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.13.1/themes/base/jquery-ui.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
 
     <style>
 .btn1{
@@ -38,14 +42,29 @@
     color: red;
 }
 
+table.bt {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+table.bt tr {
+    border: 1px solid black;
+}
+
+table.bt th, table.bt td{
+    border: 1px solid black;
+    padding: 5px;
+}
+
 
     </style>
     <script src="create_exam_app.js"></script>
     <script src="rest_api_client.js"></script>
+
 </head>
 
 <body>
-        <h1>Tymczasowy formularz do tworzenia egzaminów</h1>
+        <h1>Temporary form to create exams</h1>
 
 <div id="start">
     <form id="start_form">
@@ -70,12 +89,12 @@
         <table style="flex: 1;">
             <tr>
                 <td><label>Exam title</label></td>
-                <td> <input type="text" name="exam_title" placeholder="Exam title" required/> </td>
+                <td> <input type="text" name="title" placeholder="Exam title" required/> </td>
             </tr>
 
             <tr>
                 <td><label>Max approaches</label></td>
-                <td><input type="number" min="0" name="exam_title"/> </td>
+                <td><input type="number" min="0" name="max_approaches"/> </td>
             </tr>
 
             <tr>
@@ -97,50 +116,33 @@
     
 </form>
 
-<div id="question_table_div">
-    <table>
+<div name="questions">
+    <table class="bt">
         <tr>
             <th>Pytanie</th>
             <th>Odpowiedzi</th>
+            <th></th>
         </tr>
+
+        <tr>
+            <td>Więcej niż jedno zwierzę to:</td>
+            <td>
+                Owca <br/>
+                Lama <br/>
+                Stado <br/>
+            </td>
+            <td><button type="button">Delete question</button></td>
+        </tr>
+
     </table>
+
+    <button type="button" name="new_question">New question</button>
+
+</div>
 </div>
 
-
-<!-- <p id="desc1">Questions:</p>
-
-<form name="question">
-    <button type="submit">Add question</button>
-    <table>
-    <tr>
-        <td>Question text</td>
-        <td>
-            <input name="text" type="text" required/>
-        </td>
-    </tr>
-    <tr>
-        <td>Question type </td>
-        <td>
-            <select name="type" required>
-                <option value="0">Single-choice</option>
-                <option value="1">Multiple-choice</option>
-            </select>
-        </td>
-    </tr>
-    <tr>
-        <td>Options</td>
-        <td>
-            <span id="desc2"></span>
-        </td>
-    </tr>
-
-    </table>
-    <br/>
-    <br/>
-</form>
-
-<form name="question_option">
-    <button type="submit">Add option</button>
+<div style="display: none;" title="Option form" id="question_option_dialog_window">
+<form>
     <table>
         <tr>
             <td>Option text</td>
@@ -156,10 +158,32 @@
             </td>
         </tr>
     </table>
-</form> -->
-
+    <button type="submit">Add option</button>
+</form>
 </div>
 
+<div style="display: none;" title="Question form" id="question_dialog_window">
+<form>
+    <table>
+        <tr>
+            <td>Question text</td>
+            <td>
+                <input name="text" type="text" required/>
+            </td>
+        </tr>
+        <tr>
+            <td>Question type </td>
+            <td>
+                <select name="type" required>
+                    <option value="0">Single-choice</option>
+                    <option value="1">Multiple-choice</option>
+                </select>
+            </td>
+        </tr>
+    </table>
+    <button type="submit">Add question</button>
+</form>
+</div>
 
 
 <script>
