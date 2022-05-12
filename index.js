@@ -36,6 +36,7 @@ Your id is: ${req.user_id}.
   res.status(200).send(response);
 })
 
+app.use('/priv', express.static('priv'));
 
 app.listen(3002, () => {
     console.log('Exam app listening on port 3002!');

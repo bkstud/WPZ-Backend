@@ -60,7 +60,11 @@ async function countQuestionsByExamId(exam_id){
 }
 
 
-function mCreateQuestion(question_data){
+function mCreateQuestion(question_data, exam_id_in=null){
+
+    if(exam_id_in!=null){
+        question_data.exam_id = exam_id_in;
+    }
 
     if(!(typeof question_data.text === 'string' || question_data.text instanceof String)){
         return {
@@ -143,6 +147,25 @@ async function createQuestion(question_data){
     return q1_r;
 }
 
+async function createExamQuestions(exam_id, question_data_list){
+    let questions = question_data_list.map( a=> mCreateQuestion(a, exam_id));
+    for(let t of questions){
+        if(!t.success){
+            return t;
+        }
+    }
+
+    questions = await Promise.all(questions.map(async function(question){
+        return await question.save();
+    }));
+
+    return {
+        "success": true,
+        "questions": questions
+    }
+}
+
+
 async function deleteQuestion(question_id){
     await Question.destroy({
         where: {
@@ -183,5 +206,6 @@ module.exports = {
     countQuestionsByExamId,
     createQuestion,
     updateQuestion,
+    createExamQuestions,
     deleteExamQuestions
 }

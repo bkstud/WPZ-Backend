@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pl_PL">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Tymczasowy formularz do tworzenia egzaminów</title>
+
+    <style>
+.btn1{
+    display: inline-block;
+    border:2px solid rgb(0, 122, 0);
+    background-color: rgb(0, 192, 0);
+    color: white;
+
+    font-family: "Lucida Console", "Courier New", monospace;
+    font-size: 16px;
+    text-decoration: none;
+    padding: 6px 10px;
+    cursor: pointer;
+}
+
+.btn1:hover{
+    background-color: rgb(134, 192, 0);
+    color: white;
+    text-decoration: none;
+}
+
+.btn1:focus{
+    background-color: rgb(0, 236, 0);
+    color: white;
+    text-decoration: none;
+}
+.good {
+    color: green;
+}
+
+.bad {
+    color: red;
+}
+
+
+    </style>
+    <script src="create_exam_app.js"></script>
+    <script src="rest_api_client.js"></script>
+</head>
+
+<body>
+        <h1>Tymczasowy formularz do tworzenia egzaminów</h1>
+
+<div id="start">
+    <form id="start_form">
+        <table>
+            <tr>
+                <td><label for="username_input">Username</label></td>
+                <td><input type="text" id="username_input" name="username" placeholder="username" required/></td>
+            </tr>
+            <tr>
+                <td><label for="password_input">Password</label></td>
+                <td><input type="password" id="password_input" name="password" placeholder="password" required/></td>
+            </tr>
+        </table>
+        <br/>
+        <button type="submit" class="btn1">Start</button>
+    </form>
+</div>
+<div id="exam_div" style="display: none;">
+<form name="exam">
+    <div style="display: flex;">
+
+        <table style="flex: 1;">
+            <tr>
+                <td><label>Exam title</label></td>
+                <td> <input type="text" name="exam_title" placeholder="Exam title" required/> </td>
+            </tr>
+
+            <tr>
+                <td><label>Max approaches</label></td>
+                <td><input type="number" min="0" name="exam_title"/> </td>
+            </tr>
+
+            <tr>
+                <td> <label>Start time</label> </td>
+                <td><input type="datetime-local" name="start_time"/></td>
+            </tr>
+
+            <tr>
+                <td><label>End time</label></td>
+                <td><input type="datetime-local" name="end_time"/></td></td>
+            </tr>
+
+        </table>
+        <div>
+            <button type="submit" class="btn1">POST_EXAM</button>
+        </div>
+        
+    </div>
+    
+</form>
+
+<div id="question_table_div">
+    <table>
+        <tr>
+            <th>Pytanie</th>
+            <th>Odpowiedzi</th>
+        </tr>
+    </table>
+</div>
+
+
+<!-- <p id="desc1">Questions:</p>
+
+<form name="question">
+    <button type="submit">Add question</button>
+    <table>
+    <tr>
+        <td>Question text</td>
+        <td>
+            <input name="text" type="text" required/>
+        </td>
+    </tr>
+    <tr>
+        <td>Question type </td>
+        <td>
+            <select name="type" required>
+                <option value="0">Single-choice</option>
+                <option value="1">Multiple-choice</option>
+            </select>
+        </td>
+    </tr>
+    <tr>
+        <td>Options</td>
+        <td>
+            <span id="desc2"></span>
+        </td>
+    </tr>
+
+    </table>
+    <br/>
+    <br/>
+</form>
+
+<form name="question_option">
+    <button type="submit">Add option</button>
+    <table>
+        <tr>
+            <td>Option text</td>
+            <td>
+                <input name="text" type="text" required/>
+            </td>
+        </tr>
+
+        <tr>
+            <td>Correct</td>
+            <td>
+                <input name="correct" type="checkbox"/>
+            </td>
+        </tr>
+    </table>
+</form> -->
+
+</div>
+
+
+
+<script>
+    let app = new CreateExamApp();
+</script>
+
+</body>
+</html>
