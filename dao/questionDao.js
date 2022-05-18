@@ -154,8 +154,7 @@ async function createExamQuestions(exam_id, question_data_list){
             return t;
         }
     }
-
-    questions = await Promise.all(questions.map(async function(question){
+    questions = await Promise.all(questions.map(q_r => q_r.question).map(async function(question){
         return await question.save();
     }));
 

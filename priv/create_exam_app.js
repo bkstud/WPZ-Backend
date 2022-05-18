@@ -7,7 +7,6 @@ class CreateExamApp{
         
         this.auth = null;
 
-        console.log("Hello world");
         this.startDiv = document.getElementById("start");
         this.examDiv = document.getElementById("exam_div");
 
@@ -52,6 +51,7 @@ class CreateExamApp{
             if(user.admin){
                 _this.startDiv.style.display="none";
                 _this.examDiv.style.display=null;
+                _this.auth = auth;
             }
             else{
                 alert("This is not a admin account!");
@@ -62,19 +62,17 @@ class CreateExamApp{
         }, auth);
     }
 
-    examFormOnSubmit(event){
-        event.preventDefault();
-        let fd = new FormData(event.target);
-        let title = fd.get("title");
-        let max_approaches = fd.get("max_approaches");
-        if(max_approaches==null || max_approaches=="")max_approaches=-1;
+    
 
-        let start_time = fd.get("start_time");
-        let end_time = fd.get("end_time");
-
-        let questions = this.questions;
-        let exam = {title, max_approaches, start_time, end_time, questions};
-        this.postExam(exam);
+    getQuestionTypeDescription(question){
+        switch(question.type){
+        case 0:
+            return "Single-choice";
+        case 1:
+            return "Multiple-choice";
+        default:
+            return "Unknown";
+        }
     }
 
     createQuestion(question){
@@ -94,23 +92,16 @@ class CreateExamApp{
         let row = this.questions_table.insertRow(-1);
         let cell0 = row.insertCell(0);
         cell0.innerText = question.text;
-        
+
         let cell1 = row.insertCell(1);
-        cell1.style.padding = "0px";
+        cell1.innerText = this.getQuestionTypeDescription(question);
+
+        let cell2 = row.insertCell(2);
+        cell2.style.padding = "0px";
 
         let tmp = document.createElement("div");
         tmp.setAttribute("name", "options_list");
-        cell1.appendChild(tmp);
-
-        let cell2 = row.insertCell(2);
-        let delete_button = document.createElement("button");
-        delete_button.type = "button";
-        delete_button.innerText = "delete question";
-        delete_button.onclick = function(){
-            _this.deleteQuestion(internal_id);
-        }
-
-        cell2.appendChild(delete_button);
+        cell2.appendChild(tmp);
 
         let div1 = document.createElement("div");
         div1.style.padding="5px";
@@ -123,7 +114,19 @@ class CreateExamApp{
         }
 
         div1.appendChild(btn);
-        cell1.appendChild(div1);
+        cell2.appendChild(div1);
+
+        let cell3 = row.insertCell(3);
+        let delete_button = document.createElement("button");
+        delete_button.type = "button";
+        delete_button.innerText = "delete question";
+        delete_button.onclick = function(){
+            _this.deleteQuestion(internal_id);
+        }
+
+        cell3.appendChild(delete_button);
+
+        
 
         row.setAttribute("name", internal_id);
 
@@ -136,19 +139,20 @@ class CreateExamApp{
             question.options = [];
         }
 
-        console.log(question);
     }
 
     createQuestionOption(question_option, q_internal_id, table_row=null){
         //let q_internal_id = this._selected_question_internal_id;
-        let internal_id = null;
+        let o_internal_id = null;
         if(question_option.hasOwnProperty("id")){
-            internal_id = `${q_internal_id}O${question_option.id}`;
+            o_internal_id = `${q_internal_id}O${question_option.id}`;
         }
         else{
-            internal_id = `QO${this.question_option_internal_id_counter}`;
+            o_internal_id = `QO${this.question_option_internal_id_counter}`;
             ++this.question_option_internal_id_counter;
         }
+
+        question_option.internal_id = o_internal_id;
 
         let question = this.questions.find(a=>a.internal_id==q_internal_id);
         question.options.push(question_option);
@@ -157,11 +161,11 @@ class CreateExamApp{
         }
 
         if(table_row!=null){
-            let options_list_div = table_row.cells[1].querySelector("div[name='options_list']");
+            let options_list_div = table_row.cells[2].querySelector("div[name='options_list']");
 
             let option_div = document.createElement("div");
             option_div.classList.add("border_bottom1");
-            option_div.setAttribute("name", internal_id);
+            option_div.setAttribute("name", o_internal_id);
 
             let s = document.createElement("span");
             if(question_option.correct){
@@ -174,11 +178,12 @@ class CreateExamApp{
             s.innerText = question_option.text;
 
             let delete_button = document.createElement("button");
+            delete_button.style.marginLeft="15px";
             delete_button.type="button";
             delete_button.innerText = "Delete";
             let _this = this;
             delete_button.onclick = function(){
-                _this.deleteQuestionOption(q_internal_id, internal_id);
+                _this.deleteQuestionOption(q_internal_id, o_internal_id);
             }
 
             option_div.appendChild(s);
@@ -214,7 +219,7 @@ class CreateExamApp{
             event.preventDefault();
             let fd = new FormData(event.target);
             let text = fd.get("text");
-            let type = fd.get("type");
+            let type = Number.parseInt(fd.get("type"));
 
             let question = {text, type};
             _this.createQuestion(question);
@@ -272,8 +277,67 @@ class CreateExamApp{
         this.question_option_dialog_window.dialog("open");
     }
 
+    onIncorrectQuestion(question, message){
+        alert(`Cannot create exam, incorrect question: "${question.text}"\n${message}`);
+    }
+
+
+    examFormOnSubmit(event){
+        event.preventDefault();
+        let fd = new FormData(event.target);
+        let title = fd.get("title");
+        let max_approaches = fd.get("max_approaches");
+        if(max_approaches==null || max_approaches=="")max_approaches=-1;
+
+        function getTimeParam(p_name){
+            let result_string = fd.get(p_name);
+            if(result_string==null || result_string=="")return null;
+            return Date.parse(result_string);//new Date(result_string).getTime();
+        }
+
+        let start_time = getTimeParam("start_time");
+        let end_time = getTimeParam("end_time");
+
+        let questions = this.questions;
+        let exam = {title, max_approaches, start_time, end_time, questions};
+
+
+        function isQuestionWithoutCorrectOption(question){
+            return question.options.find(o=>o.correct)==null;
+        }
+
+        function isIncorrectSingleChoiceQuestion(question){
+            if(question.type!=0)return false;
+            return question.options.filter(o=>o.correct).length!=1;
+        }
+
+        let incorrect_question = exam.questions.find(isQuestionWithoutCorrectOption);
+        if(incorrect_question!=null){
+            this.onIncorrectQuestion(incorrect_question,"There is no correct answer."); 
+            return;
+        }
+
+        incorrect_question = exam.questions.find(isIncorrectSingleChoiceQuestion);
+        if(incorrect_question!=null){
+            this.onIncorrectQuestion(incorrect_question, "This question is single-choice, but multiple correct answers provided.");
+            return;
+        }
+
+        this.postExam(exam);
+    }
+
     postExam(exam){
         console.log(exam);
+        function onSuccess(exam, status_code){
+            alert("Successfully created exam");
+            console.log(exam);
+        }
+
+        function onFailure(message, status_code){
+            alert(`Error with code: ${status_code}`);
+
+        }
+        RestAPIClient.post("/api/admin/exams", exam, onSuccess, onFailure, this.auth);
     }
 
 }

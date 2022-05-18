@@ -38,5 +38,40 @@ router.get("/:exam_id(\\d+)", (req, res)=>{
     }).catch(err => onServerError(res, err));
 });
 
+router.post("/", (req, res)=>{
+    examDao.createExam(req.body).then(exam_r=>{
+        if(exam_r.success){
+            res.status(200).json(exam_r.exam);
+        }
+        else{
+            onClientError(res, exam_r.status_code, exam_r.message);
+        }
+    }).catch(err => onServerError(res, err));
+});
+
+router.put("/:exam_id(\\d+)", (req, res) =>{
+    let exam_id = req.params.exam_id;
+    examDao.updateExam(exam_id, req.body).then(exam_r=>{
+        if(exam_r.success){
+            res.status(200).json(exam_r.exam);
+        }
+        else{
+            onClientError(res, exam_r.status_code, exam_r.message);
+        }
+    }).catch(err => onServerError(res, err));
+});
+
+router.delete("/:exam_id(\\d+)", (req, res)=>{
+    let exam_id = req.params.exam_id;
+    examDao.deleteExam(exam_id, true).then(exam_r=>{
+        if(exam_r.success){
+            res.sendStatus(204);
+        }
+        else{
+            onClientError(res, exam_r.status_code, exam_r.message);
+        }
+    }).catch(err => onServerError(res, err));
+});
+
 
 module.exports = router;

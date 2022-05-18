@@ -19,14 +19,25 @@ const RestAPIClient = {
         if(statusCodeCategory==2){
             let json_object = null;
             if(statusCode!=204){
-                json_object = JSON.parse(xhr.responseText);
+                try{
+                    json_object = JSON.parse(xhr.responseText);
+                }
+                catch(e){
+                    json_object = xhr.responseText;
+                }
+                
             }
             onsuccess(json_object, statusCode);
         }
         else if(statusCodeCategory==4 && onclienterror!=null){
             let json_object = null;
             if(statusCode!=404 && statusCode!=405){
-                json_object = JSON.parse(xhr.responseText);
+                try{
+                    json_object = JSON.parse(xhr.responseText);
+                }
+                catch(e){
+                    json_object = xhr.responseText;
+                }
             }
             onclienterror(json_object, statusCode);
         }

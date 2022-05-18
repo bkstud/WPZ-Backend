@@ -146,11 +146,13 @@ async function mCreateExam(exam_data){
 
 
 async function createExam(exam_data){
-    let exam_r = mCreateExam(exam_data);
+
+    let exam_r = await mCreateExam(exam_data);
     if(exam_r.success){
+
         let exam =  await exam_r.exam.save();
         if(exam_data.hasOwnProperty("questions")){
-            let q_r = questionDao.createExamQuestions(exam.id, exam_data.questions);
+            let q_r = await questionDao.createExamQuestions(exam.id, exam_data.questions);
             if(!q_r.success){
                 return q_r;
             }
