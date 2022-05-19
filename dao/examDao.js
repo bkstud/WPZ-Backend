@@ -185,7 +185,7 @@ async function updateExam(exam_id, exam_data){
     if(exam_data.hasOwnProperty("questions")){
         await questionDao.deleteExamQuestions(exam_r.exam.id);
 
-        let q_r = questionDao.createExamQuestions(exam_r.exam.id,exam_data.questions);
+        let q_r = await questionDao.createExamQuestions(exam_r.exam.id,exam_data.questions);
         if(!q_r.success){
             return q_r;
         }
