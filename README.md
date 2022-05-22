@@ -2,6 +2,9 @@
 To start app:
 > npm start
 
+To create an administrator account:
+> npm run createsuperuser
+
 ## To start in docker container:
 In the root directory:
 ```
