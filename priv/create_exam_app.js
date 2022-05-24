@@ -15,13 +15,7 @@ class CreateExamApp{
         start_form.onsubmit = function(event){
             _this.loginFormOnSubmit(event);
         }
-
-        this.question_internal_id_counter = 0;
-        this.question_option_internal_id_counter = 0;
-
-        this.questions = [];
-        this.options = [];
-
+        
         let title_form = this.examDiv.querySelector("form[name='exam']");
         title_form.onsubmit = function(event){
             _this.examFormOnSubmit(event);            
@@ -37,6 +31,24 @@ class CreateExamApp{
         new_question_button.onclick = function(){
             _this.showQuestionDialogWindow();
         }
+
+        this.clearForms();
+    }
+
+    clearForms(){
+        this.question_internal_id_counter = 0;
+        this.question_option_internal_id_counter = 0;
+
+        this.questions = [];
+        this.options = [];
+
+        this.questions_table.innerHTML = `
+        <tr>
+            <th>Question</th>
+            <th>Type</th>
+            <th>Options</th>
+            <th></th>
+        </tr>`;
     }
 
     loginFormOnSubmit(event){
@@ -323,21 +335,20 @@ class CreateExamApp{
             return;
         }
 
-        this.postExam(exam);
-    }
-
-    postExam(exam){
-        console.log(exam);
+        
+        let _this=this;
         function onSuccess(exam, status_code){
             alert("Successfully created exam");
-            console.log(exam);
+            _this.clearForms();
+            event.target.reset();
+            
         }
 
         function onFailure(message, status_code){
             alert(`Error with code: ${status_code}`);
 
         }
+
         RestAPIClient.post("/api/admin/exams", exam, onSuccess, onFailure, this.auth);
     }
-
 }

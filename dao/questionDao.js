@@ -96,9 +96,11 @@ function mCreateQuestion(question_data, exam_id_in=null){
         "type": question_data.type
     })
 
-    q1.options = question_data.options;
+    //q1.options = question_data.options;
 
-    if(!Array.isArray(q1.options)){
+    let options = question_data.options;
+
+    if(!Array.isArray(options)){
         return {
             "success": false,
             "status_code": 400,
@@ -108,7 +110,7 @@ function mCreateQuestion(question_data, exam_id_in=null){
 
     let option_id_counter=1;
 
-    for(let option of q1.options){
+    for(let option of options){
         if(!typeof option.correct === "boolean"){
 
             return {
@@ -133,6 +135,14 @@ function mCreateQuestion(question_data, exam_id_in=null){
             ++option_id_counter;
         }
     }
+
+    q1.options = options.map(o=>{
+        return {
+            "id" : o.id,
+            "correct" : o.correct,
+            "text": o.text
+            }})
+
     return {
         "success": true,
         "question": q1
