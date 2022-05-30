@@ -1,6 +1,6 @@
 'use strict';
 
-const{onClientError} = require("../controllers/errorHandler");
+const{onClientError} = require("../routers/errorHandler");
 
 
 const jwt = require('jsonwebtoken')

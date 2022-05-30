@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Temporary form to create exams</title>
+
+    <link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.13.1/themes/base/jquery-ui.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+
+    <style>
+.btn1{
+    display: inline-block;
+    border:2px solid rgb(0, 122, 0);
+    background-color: rgb(0, 192, 0);
+    color: white;
+
+    font-family: "Lucida Console", "Courier New", monospace;
+    font-size: 16px;
+    text-decoration: none;
+    padding: 6px 10px;
+    cursor: pointer;
+}
+
+.btn1:hover{
+    background-color: rgb(134, 192, 0);
+    color: white;
+    text-decoration: none;
+}
+
+.btn1:focus{
+    background-color: rgb(0, 236, 0);
+    color: white;
+    text-decoration: none;
+}
+.good {
+    color: green;
+}
+
+.bad {
+    color: red;
+}
+
+table.bt {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+table.bt tr {
+    border: 1px solid black;
+}
+
+table.bt th, table.bt td{
+    border: 1px solid black;
+    padding: 5px;
+}
+
+.zp{
+    padding: 0px;
+}
+
+.border_bottom1 {
+    border-bottom: 1px solid black;
+    padding: 5px;
+}
+
+    </style>
+    <script src="create_exam_app.js"></script>
+    <script src="rest_api_client.js"></script>
+
+</head>
+
+<body>
+<h1>Temporary form to create exams</h1>
+
+<div id="start">
+    <form id="start_form">
+        <table>
+            <tr>
+                <td><label for="username_input">Username</label></td>
+                <td><input type="text" id="username_input" name="username" placeholder="username" required/></td>
+            </tr>
+            <tr>
+                <td><label for="password_input">Password</label></td>
+                <td><input type="password" id="password_input" name="password" placeholder="password" required/></td>
+            </tr>
+        </table>
+        <br/>
+        <button type="submit" class="btn1">Start</button>
+    </form>
+</div>
+<div id="exam_div" style="display: none;">
+<form name="exam">
+    <div style="display: flex;">
+
+        <table style="flex: 1;">
+            <tr>
+                <td><label>Exam title</label></td>
+                <td> <input type="text" name="title" placeholder="Exam title" required/> </td>
+            </tr>
+
+            <tr>
+                <td><label>Max approaches</label></td>
+                <td><input type="number" min="0" name="max_approaches"/> </td>
+            </tr>
+
+            <tr>
+                <td> <label>Start time</label> </td>
+                <td><input type="datetime-local" name="start_time"/></td>
+            </tr>
+
+            <tr>
+                <td><label>End time</label></td>
+                <td><input type="datetime-local" name="end_time"/></td></td>
+            </tr>
+
+        </table>
+        <div>
+           
+        </div>
+        
+    </div>
+
+
+<div name="questions">
+    <table class="bt" style="min-width: 600px; margin-top: 20px;">
+    </table>
+
+    <button type="button" name="new_question">New question</button>
+    <br/>
+    <br/>
+    <button type="submit" class="btn1">Create exam</button>
+</div>
+
+</form>
+</div>
+
+<div style="display: none;" title="Option form" id="question_option_dialog_window">
+<form>
+    <table>
+        <tr>
+            <td>Option text</td>
+            <td>
+                <input name="text" type="text" required/>
+            </td>
+        </tr>
+
+        <tr>
+            <td>Correct</td>
+            <td>
+                <input name="correct" type="checkbox"/>
+            </td>
+        </tr>
+    </table>
+    <button type="submit">Add option</button>
+</form>
+</div>
+
+<div style="display: none;" title="Question form" id="question_dialog_window">
+<form>
+    <table>
+        <tr>
+            <td>Question text</td>
+            <td>
+                <input name="text" type="text" required/>
+            </td>
+        </tr>
+        <tr>
+            <td>Question type </td>
+            <td>
+                <select name="type" required>
+                    <option value="0">Single-choice</option>
+                    <option value="1">Multiple-choice</option>
+                </select>
+            </td>
+        </tr>
+    </table>
+    <button type="submit">Add question</button>
+</form>
+</div>
+
+
+<script>
+    let app = new CreateExamApp();
+</script>
+
+</body>
+</html>

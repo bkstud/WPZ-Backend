@@ -60,7 +60,11 @@ async function countQuestionsByExamId(exam_id){
 }
 
 
-function mCreateQuestion(question_data){
+function mCreateQuestion(question_data, exam_id_in=null){
+
+    if(exam_id_in!=null){
+        question_data.exam_id = exam_id_in;
+    }
 
     if(!(typeof question_data.text === 'string' || question_data.text instanceof String)){
         return {
@@ -92,9 +96,11 @@ function mCreateQuestion(question_data){
         "type": question_data.type
     })
 
-    q1.options = question_data.options;
+    //q1.options = question_data.options;
 
-    if(!Array.isArray(q1.options)){
+    let options = question_data.options;
+
+    if(!Array.isArray(options)){
         return {
             "success": false,
             "status_code": 400,
@@ -104,7 +110,7 @@ function mCreateQuestion(question_data){
 
     let option_id_counter=1;
 
-    for(let option of q1.options){
+    for(let option of options){
         if(!typeof option.correct === "boolean"){
 
             return {
@@ -129,6 +135,14 @@ function mCreateQuestion(question_data){
             ++option_id_counter;
         }
     }
+
+    q1.options = options.map(o=>{
+        return {
+            "id" : o.id,
+            "correct" : o.correct,
+            "text": o.text
+            }})
+
     return {
         "success": true,
         "question": q1
@@ -142,6 +156,24 @@ async function createQuestion(question_data){
     }
     return q1_r;
 }
+
+async function createExamQuestions(exam_id, question_data_list){
+    let questions = question_data_list.map( a=> mCreateQuestion(a, exam_id));
+    for(let t of questions){
+        if(!t.success){
+            return t;
+        }
+    }
+    questions = await Promise.all(questions.map(q_r => q_r.question).map(async function(question){
+        return await question.save();
+    }));
+
+    return {
+        "success": true,
+        "questions": questions
+    }
+}
+
 
 async function deleteQuestion(question_id){
     await Question.destroy({
@@ -183,5 +215,6 @@ module.exports = {
     countQuestionsByExamId,
     createQuestion,
     updateQuestion,
+    createExamQuestions,
     deleteExamQuestions
 }

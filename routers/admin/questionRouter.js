@@ -61,10 +61,4 @@ router.put("/:question_id(\\d+)", (req, res)=>{
     ).catch(err => onServerError(res, err));
 })
 
-router.get("/hello", (req, res)=>{
-    res.status(200).send(`Hello ${req.user_id}`);
-
-});
-
-
 module.exports = router;

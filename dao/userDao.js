@@ -180,5 +180,14 @@ async function updateUser(user_id, json_in, allow_admin=false){
 }
 
 module.exports = {
-    getAllUsers, getUserById, getUserByUsername, deleteUserById, updateUser, createUser, getUserByUsernameAndPassword
+    getAllUsers,
+    getUserById,
+    getUserByUsername,
+    deleteUserById,
+    updateUser,
+    createUser,
+    getUserByUsernameAndPassword,
+
+    isUsernameTaken,
+    isEmailValid
 }
