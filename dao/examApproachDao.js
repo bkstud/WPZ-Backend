@@ -29,7 +29,7 @@ async function mCollectExamData(exam_in, user_id){
     }
 
     const approaches = await ExamApproach.findAll(
-        {where:{"user_id":user_id}});
+        {where:{"user_id":user_id, "exam_id":exam.id}});
 
     if(exam.max_approaches >= 0){
         let approaches_remaining = exam.max_approaches - approaches.length;
