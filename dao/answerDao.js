@@ -12,6 +12,13 @@ async function findAnswersByApproachId(approach_id){
     }})
 }
 
+async function findAnswersByApproachIdAndQuestionId(approach_id, question_id){
+    return await Answer.findAll({where: {
+        "approach_id": approach_id,
+        "question_id": question_id,
+    }});
+}
+
 async function countCorrectAnswersByApproachId(approach_id){
     return await Answer.count({where:{
         approach_id: approach_id,
@@ -93,11 +100,7 @@ async function postAnswer(user_id, answer_data){
     jeśli tak, to trzeba tę odpowiedź usunąć.
     (user_id nie trzeba sprawdzać, bo wynika funkcyjnie od approach_id)
     */
-    let previousAnswers = await Answer.findAll(
-        {where: {
-            "approach_id": approach_id,
-            "question_id": question_id,
-        }});
+    let previousAnswers = await findAnswersByApproachIdAndQuestionId(approach_id, question_id);
 
     if(previousAnswers.length != 0){
         await Answer.destroy({
@@ -116,8 +119,33 @@ async function postAnswer(user_id, answer_data){
     }
 }
 
+async function mCollectAnswersForQuestion(approach_id, question){
+    let id = question.id;
+    let options = question.options;
+    let exam_id = question.exam_id;
+    let text = question.text;
+    let type = question.type;
+
+    let answers = await findAnswersByApproachIdAndQuestionId(approach_id, id);
+    let chosen_options = answers.map(a=>a.chosen_options).flat();
+
+    return {id, options, exam_id, text, type, chosen_options};
+}
+
+async function getQuestionsForApproachWithAnswers(approach_id, user_id){
+    let res = await examApproachDao.getQuestionsForApproach(approach_id, user_id);
+    if(!res.success)return res;
+    
+    res.questions = await Promise.all(res.questions.map(async function(question){
+        return await mCollectAnswersForQuestion(approach_id, question);
+    }));
+
+    return res;
+}
+
 module.exports = {
     findAnswersByApproachId,
     countCorrectAnswersByApproachId,
-    postAnswer
+    postAnswer,
+    getQuestionsForApproachWithAnswers
 }

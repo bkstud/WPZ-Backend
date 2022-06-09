@@ -4,7 +4,7 @@ const express = require('express');
 const router = express.Router();
 const examApproachDao = require("../dao/examApproachDao");
 const scoreDao = require("../dao/scoreDao");
-
+const answerDao = require("../dao/answerDao");
 
 //const onError = require("./errorController");
 const{onClientError, onServerError} = require("./errorHandler");
@@ -70,7 +70,7 @@ router.post("/approaches/:approach_id(\\d+)/end", (req, res)=>{
 
 router.get("/approaches/:approach_id(\\d+)/questions", (req, res)=>{
     let approach_id = req.params.approach_id;
-    examApproachDao.getQuestionsForApproach(approach_id, req.user_id).then(function(result){
+    answerDao.getQuestionsForApproachWithAnswers(approach_id, req.user_id).then(function(result){
         if(result.success){
             res.status(200).json(result.questions);
         }
