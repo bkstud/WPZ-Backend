@@ -1,6 +1,7 @@
 import time
 
 from selenium.webdriver import Keys
+from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import StaleElementReferenceException
@@ -370,7 +371,7 @@ class ExamsPage(MainPage):
         """Triggers the search"""
         time.sleep(0.25)
         element = self.driver.find_element(*ExamPageLocators.EXAMS_LIST_ROOT)
-        children = element.find_elements_by_xpath(".//*")
+        children = element.find_elements(By.XPATH, ".//*")
         return children
 
 
